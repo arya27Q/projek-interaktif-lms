@@ -3,6 +3,16 @@ import Login from '../modules/auth/views/Login.vue';
 import Register from '../modules/auth/views/Register.vue';
 import ForgotPassword from '../modules/auth/views/ForgotPassword.vue';
 
+import UserLayout from '../layouts/UserLayout.vue';
+import Profile from '../modules/user/views/Profile.vue';
+import Achievements from '../modules/user/views/Achievements.vue';
+import EditProfile from '../modules/user/views/EditProfile.vue';
+import ChangePassword from '../modules/user/views/ChangePassword.vue';
+import TwoFactorAuth from '../modules/user/views/TwoFactorAuth.vue';
+import PrivacySettings from '../modules/user/views/PrivacySettings.vue';
+
+import Catalog from '../modules/course/views/Catalog.vue';
+
 const routes = [
     {
         path: '/login',
@@ -20,6 +30,47 @@ const routes = [
         component: ForgotPassword
     },
     {
+        path: '/',
+        component: UserLayout,
+        children: [
+            {
+                path: 'catalog',
+                name: 'Catalog',
+                component: Catalog
+            },
+            {
+                path: 'profile',
+                name: 'Profile',
+                component: Profile
+            },
+            {
+                path: 'profile/achievements',
+                name: 'Achievements',
+                component: Achievements
+            },
+            {
+                path: 'profile/edit',
+                name: 'EditProfile',
+                component: EditProfile
+            },
+            {
+                path: 'profile/settings/password',
+                name: 'ChangePassword',
+                component: ChangePassword
+            },
+            {
+                path: 'profile/settings/2fa',
+                name: 'TwoFactorAuth',
+                component: TwoFactorAuth
+            },
+            {
+                path: 'profile/settings/privacy',
+                name: 'PrivacySettings',
+                component: PrivacySettings
+            }
+        ]
+    },
+    {
         // Default route to redirect to login for now
         path: '/',
         redirect: '/login'
@@ -28,7 +79,14 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory(),
-    routes
+    routes,
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) {
+            return savedPosition
+        } else {
+            return { top: 0 }
+        }
+    }
 });
 
 export default router;
