@@ -12,6 +12,7 @@ import TwoFactorAuth from '../modules/user/views/TwoFactorAuth.vue';
 import PrivacySettings from '../modules/user/views/PrivacySettings.vue';
 
 import Catalog from '../modules/course/views/Catalog.vue';
+import InstructorStudio from '../modules/course/views/InstructorStudio.vue';
 
 const routes = [
     {
@@ -37,6 +38,11 @@ const routes = [
                 path: 'catalog',
                 name: 'Catalog',
                 component: Catalog
+            },
+            {
+                path: 'instructor',
+                name: 'InstructorStudio',
+                component: InstructorStudio
             },
             {
                 path: 'profile',

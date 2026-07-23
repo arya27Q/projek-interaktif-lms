@@ -22,19 +22,19 @@
         </div>
         <!-- Main Tabs -->
         <nav class="flex-1 space-y-2">
-          <router-link to="/" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low transition-all duration-200" exact-active-class="text-primary font-bold bg-surface-container-low">
+          <router-link to="/" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low hover:text-primary transition-all duration-200" exact-active-class="!text-primary font-bold bg-surface-container-low">
             <span class="material-symbols-outlined">dashboard</span>
             <span class="font-body-md">Dashboard</span>
           </router-link>
-          <router-link to="/courses" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low transition-all duration-200" active-class="text-primary font-bold bg-surface-container-low">
+          <router-link to="/courses" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low hover:text-primary transition-all duration-200" active-class="!text-primary font-bold bg-surface-container-low">
             <span class="material-symbols-outlined">school</span>
             <span class="font-body-md">Courses</span>
           </router-link>
-          <router-link to="/catalog" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low transition-all duration-200" active-class="text-primary font-bold bg-surface-container-low">
+          <router-link to="/catalog" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low hover:text-primary transition-all duration-200" active-class="!text-primary font-bold bg-surface-container-low">
             <span class="material-symbols-outlined">library_books</span>
             <span class="font-body-md">Catalog</span>
           </router-link>
-          <router-link to="/instructor" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low transition-all duration-200" active-class="text-primary font-bold bg-surface-container-low">
+          <router-link to="/instructor" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low hover:text-primary transition-all duration-200" active-class="!text-primary font-bold bg-surface-container-low">
             <span class="material-symbols-outlined">video_settings</span>
             <span class="font-body-md">Instructor Studio</span>
           </router-link>
@@ -47,15 +47,15 @@
         </div>
         <!-- Footer Tabs -->
         <div class="space-y-2 border-t border-surface-container-low pt-4">
-          <router-link to="/profile" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low transition-all duration-200" active-class="text-primary font-bold bg-surface-container-low">
+          <router-link to="/profile" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low hover:text-primary transition-all duration-200" active-class="!text-primary font-bold bg-surface-container-low">
             <span class="material-symbols-outlined">person</span>
             <span class="font-body-md">Profile</span>
           </router-link>
-          <router-link to="/profile/settings/privacy" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low transition-all duration-200" active-class="text-primary font-bold bg-surface-container-low">
+          <router-link to="/profile/settings/privacy" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low hover:text-primary transition-all duration-200" active-class="!text-primary font-bold bg-surface-container-low">
             <span class="material-symbols-outlined">settings</span>
             <span class="font-body-md">Settings</span>
           </router-link>
-          <router-link to="/login" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low transition-all duration-200">
+          <router-link to="/login" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low hover:text-primary transition-all duration-200">
             <span class="material-symbols-outlined">logout</span>
             <span class="font-body-md">Logout</span>
           </router-link>
@@ -93,19 +93,19 @@
 
     <!-- Mobile Bottom Navigation Shell -->
     <nav class="lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-surface-container-lowest flex items-center justify-around px-4 shadow-[0px_-10px_30px_rgba(0,0,0,0.04)] z-50">
-      <router-link to="/" class="flex flex-col items-center gap-1 text-secondary" exact-active-class="text-primary font-bold">
+      <router-link to="/" class="flex flex-col items-center gap-1 text-secondary" exact-active-class="!text-primary font-bold">
         <span class="material-symbols-outlined">dashboard</span>
         <span class="text-[10px] font-label-sm">Home</span>
       </router-link>
-      <router-link to="/catalog" class="flex flex-col items-center gap-1 text-secondary" active-class="text-primary font-bold">
+      <router-link to="/catalog" class="flex flex-col items-center gap-1 text-secondary" active-class="!text-primary font-bold">
         <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">library_books</span>
         <span class="text-[10px] font-label-sm">Catalog</span>
       </router-link>
-      <router-link to="/courses" class="flex flex-col items-center gap-1 text-secondary" active-class="text-primary font-bold">
+      <router-link to="/courses" class="flex flex-col items-center gap-1 text-secondary" active-class="!text-primary font-bold">
         <span class="material-symbols-outlined">school</span>
         <span class="text-[10px] font-label-sm">My Learning</span>
       </router-link>
-      <router-link to="/profile" class="flex flex-col items-center gap-1 text-secondary" active-class="text-primary font-bold">
+      <router-link to="/profile" class="flex flex-col items-center gap-1 text-secondary" active-class="!text-primary font-bold">
         <span class="material-symbols-outlined">person</span>
         <span class="text-[10px] font-label-sm">Profile</span>
       </router-link>
