@@ -59,9 +59,10 @@
         </nav>
         <!-- CTA -->
         <div class="mt-auto mb-6">
-          <button class="w-full py-3 px-4 bg-primary text-on-primary font-label-sm rounded-lg hover:-translate-y-0.5 active:scale-95 transition-transform">
-            Upgrade to Pro
-          </button>
+          <router-link to="/upgrade" class="flex items-center justify-center gap-2 w-full py-3 px-4 bg-primary text-on-primary font-label-sm rounded-lg hover:-translate-y-0.5 active:scale-95 transition-transform">
+            <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+            Upgrade ke Pro
+          </router-link>
         </div>
         <!-- Footer Tabs -->
         <div class="space-y-2 border-t border-surface-container-low pt-4">

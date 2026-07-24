@@ -3,6 +3,60 @@ export const categories = ['All Categories', 'Computer Science', 'Visual Design'
 export const csSubcategories = ['All CS', 'Programming', 'Cybersecurity', 'Artificial Intelligence', 'Data Science'];
 
 const baseCourses = [
+
+  {
+    title: 'UI/UX Design Systems',
+    level: 'Advanced',
+    duration: '12 Weeks',
+    instructor: 'Alex Rivera',
+    rating: '4.9',
+    exp: '500',
+    price: '$89.99',
+    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB0iFGGov9c1C9A0I9MGmGURERoyMmJvtCJ7bX_FXzH5dgb7-s5DpsI8Hg-ZyeWX7AoBcNlepk333YfzETPs781RK4DWaBZ-CZwBc8MQiBrHaSEdTIpLm1Ezg7Jf5fGGOtS0fs8ohEL71yVP101ZGkNBkdxjkRVUxwzvLCOgxQZSTYfc3eetN4B4DzED1MvB3TIZ-Bzsqa3RJK_o3EdKXRf7MVHr16wjtBEDr-tZIY5xqDWIQ7QyBBTXmxE3mM58teUErIDHeQzCSYJ',
+    instructorAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDBOtkqTZNINheYHqfyWkSrdst6LQA29uSEAmoSgKPkSqxsGciNjX8pbuQV4oHAY7Y0JPKCAxG2ogVNUJ8oqmYxPI7fu8y9aj3bOzg8yYWb09yC9tAZNK4LJycA7VqZxNjBBYtNsAAN8wqWVEYTInSKXQAZqaoJo5IeHn5Lrl2FtZ9aOoaqsdg7ymMKA3KyEUSariez72wQmGYviLeDVU0BrU89OAEHe62D3qO0FdQQVmrj-DmEOIl4KUYaUYcbQSprVEeIJUGdr-zS',
+    category: 'Visual Design',
+    subcategory: null
+  },
+  {
+    title: 'Modern Typography Mastery',
+    level: 'Intermediate',
+    duration: '8 Weeks',
+    instructor: 'Sarah Jenkins',
+    rating: '4.7',
+    exp: '350',
+    price: '$54.00',
+    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCE490RmRPXVb_etxrgIAkfGMelOoYvp2sPWh-V6xSDQmi7SPQHeZCfbUKrpxEeEaKaZ6_xl4nrzxuCIG7qsh2GcZR152gQmZmmP-8ggWt97k6S0O5FhOQSJvniUsgQL5nVE6bAgra2mDS7ovrrOVfIh4xj1VxPk3uUjiMIAyl8lnVX92svN7LmCWM8iLX9c9z5Jo27Yjdf_XTHqjYSD8zVPiJyOzfYpznu7R-J8-HWECGW9yGf0MqmDjJFlHJcOZejMffFFe5S_PkV',
+    instructorAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnErJv9zMB9JQ6GjbtegjRBoOXDcaFow1cMsMUCkbLZYiKCX6lfoYmIuR8nHM3ZAAv6Jil5Pv3Fp5kgCvCDj_7DeR2V-BHH4g1rcKSct9J94YIMWGjsq8awB-2yOm_7krLzTDkMt3uyCnD6s38eV3R-zv2t9lD2mJqjL7pLVJ-le5_18d9AA0P4KQaxj72EHuybn9VQReh3JLG_YUXaf_Oggalf1UQlvzOUmAX530H_bwT4k7EFlRXmkwpYd5kYIxMJnc24eMHwwAo',
+    category: 'Visual Design',
+    subcategory: null
+  },
+  {
+    title: 'Brand Identity Design',
+    level: 'Mastery',
+    duration: '10 Weeks',
+    instructor: 'Kenzo Nakamura',
+    rating: '5.0',
+    exp: '1,200',
+    price: '$149.99',
+    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDeM_A1FIlR7s7970OjqE0WOIqmTM31B0pbTy4k3Rl3ydIfF-m00yAIwe2eVKsQOOpQfO5RqyjZcQMQ4LL8hRs8WbtXIPYpyaYD23MkUhwUk4Uer3moihpjq_8kA5zL82JScYl0FqL-iqjHxY01jlm_W6m77Jvj4rq29Im2wQzrCqgmmCO_JTQMU62fauXrRB35Clu8N1NYgzVx_nps4n4OsDRC1HB2_JFZBZZLpEIS8cF_svIi0rNKJvJ-rWUml7UU9OSxRbDvWMxT',
+    instructorAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC1kJcBwnCJFhxEQcpJuLCTpR3KJ5xO59w5pvFWfMdlr0us90F-D-v6ZSWKGbq0OyhYo_cPyDoqHFEqftc8Q2OdmZq4ThLs17nrRYEVxz0JStS6qv7ue-5oUdiLMBdwD9sEfHpT_b3ShyDrhwUGa-2FeTfS8juoA_DA6QA80GgY7yCD9MuqB4q9ID1derR9v11Q_vmk15rjt81whi9hgjhXTPugi2aK7l2lcD7eRKuwuuPjyzqgW1PosTKXUt6NEZ3gPdMu_RL61SLs',
+    category: 'Visual Design',
+    subcategory: null
+  },
+  {
+    title: 'Motion Graphics with After Effects',
+    level: 'Beginner',
+    duration: '6 Weeks',
+    instructor: 'Dr. Elena Rodriguez',
+    rating: 'NEW',
+    exp: '250',
+    price: '$45.00',
+    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC34pPW97Bpwzwb5JR859P7810vgImBAhLL_rDOKFvMKWUoDbdDIokyt91YvTi55RHebif14A7Dnn4kOjaAv94IkOKEDmVzysVuZIl0PFWCn1PUOAg95cN9cc3ym_xbWFTEKMSo4IqUJ0ceSLKZqn5eRvusu03hCa-oi6el_6xUYgOHGoAKDlTvzGNuz9Ztn2PjKaOKNylOYRZ7C_Lx1NQaAJrEiqosfX7eYcyf-E1HA_0-tn6C5aR9qHgWNPWdv4Y7JD-Ar8K4u4lt',
+    instructorAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDC98uovb7c0DmTIw0SCVE9C1xi6Ood1Cj95yoGNtLX-BjIBCiV1dPyurIWAx_O6LuUDHUKccjNpvNwQ07hDB9rmX0oOMttPU65qklpzdsWdLGe-RM-oJKrUs9FAb03W6NhW6z3GKwMAR-dAOq-_Dy5FkgYCQncB1mdUPpJDo7cfEN6B8jCGxl4YyIzl3JrIQW3qntkaHzq4RNtMUie1ODtnJegMRResS701Ep86mzN1pO2wPDkcdKpnm6o6AMm2kZeyaFf6n0pNYeJ',
+    category: 'Visual Design',
+    subcategory: null
+  }
+  ,
   {
     title: 'Mastering Data Structures',
     level: 'Advanced',
@@ -104,84 +158,6 @@ const baseCourses = [
     price: '$299.99',
     exp: '2,500',
     isLearningPath: true
-  },
-  {
-    title: 'Data Science & Machine Learning',
-    level: 'Advanced',
-    duration: '32h 0m',
-    instructor: 'Dr. Emily Chen',
-    rating: '4.9',
-    exp: '650',
-    price: '$99.99',
-    thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-    instructorAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80',
-    category: 'Data Analytics',
-    subcategory: null
-  },
-  {
-    title: 'Big Data Architecture',
-    level: 'Mastery',
-    duration: '40h 0m',
-    instructor: 'David Reynolds',
-    rating: '4.8',
-    exp: '850',
-    price: '$129.99',
-    thumbnail: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
-    instructorAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&q=80',
-    category: 'Data Analytics',
-    subcategory: null
-  },
-  {
-    title: 'Advanced Social Media Marketing',
-    level: 'Intermediate',
-    duration: '16h 30m',
-    instructor: 'Chloe Sanders',
-    rating: '4.7',
-    exp: '400',
-    price: '$59.99',
-    thumbnail: 'https://images.unsplash.com/photo-1533750516457-a7f992034fec?auto=format&fit=crop&w=800&q=80',
-    instructorAvatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80',
-    category: 'Marketing',
-    subcategory: null
-  },
-  {
-    title: 'SEO & Growth Hacking',
-    level: 'Advanced',
-    duration: '24h 0m',
-    instructor: 'Michael Chang',
-    rating: '4.9',
-    exp: '550',
-    price: '$79.99',
-    thumbnail: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80',
-    instructorAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=150&q=80',
-    category: 'Marketing',
-    subcategory: null
-  },
-  {
-    title: 'Ethics in Artificial Intelligence',
-    level: 'All Levels',
-    duration: '12h 0m',
-    instructor: 'Dr. Jonathan Reed',
-    rating: '4.8',
-    exp: '300',
-    price: '$49.99',
-    thumbnail: 'https://images.unsplash.com/photo-1505664177275-b16c7f8973ce?auto=format&fit=crop&w=800&q=80',
-    instructorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-    category: 'Philosophy',
-    subcategory: null
-  },
-  {
-    title: 'Modern Stoicism for Leaders',
-    level: 'Beginner',
-    duration: '8h 0m',
-    instructor: 'Sophia Martinez',
-    rating: '4.9',
-    exp: '200',
-    price: '$39.99',
-    thumbnail: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80',
-    instructorAvatar: 'https://images.unsplash.com/photo-1598550874175-4d0ef436c909?auto=format&fit=crop&w=150&q=80',
-    category: 'Philosophy',
-    subcategory: null
   }
 ];
 
@@ -198,17 +174,17 @@ export const generateCourses = (count) => {
   const result = [];
   const catList = categories.slice(1);
   const subList = csSubcategories.slice(1);
-  
+
   for (let i = 0; i < count; i++) {
     const baseIndex = i % baseCourses.length;
     const base = baseCourses[baseIndex];
-    
+
     let cat = base.category;
     let sub = base.subcategory;
     let isFeatured = base.isFeatured;
     let isLearningPath = base.isLearningPath;
     let titleBase = base.title;
-    
+
     if (i >= baseCourses.length) {
       cat = catList[Math.floor(Math.random() * catList.length)];
       sub = cat === 'Computer Science' ? subList[Math.floor(Math.random() * subList.length)] : null;
@@ -216,7 +192,7 @@ export const generateCourses = (count) => {
       isLearningPath = false;
       titleBase = categoryTitles[cat] || cat;
     }
-    
+
     result.push({
       ...base,
       title: i >= baseCourses.length ? `${titleBase} (Vol. ${Math.floor(i / baseCourses.length) + 1})` : base.title,

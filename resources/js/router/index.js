@@ -1,21 +1,30 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Login from '../modules/auth/views/Login.vue';
-import Register from '../modules/auth/views/Register.vue';
-import ForgotPassword from '../modules/auth/views/ForgotPassword.vue';
 
+// ─── Layout (tetap eager — dibutuhkan segera di semua halaman) ───
 import UserLayout from '../layouts/UserLayout.vue';
-import Dashboard from '../modules/user/views/Dashboard.vue';
-import Profile from '../modules/user/views/Profile.vue';
-import Achievements from '../modules/user/views/Achievements.vue';
-import EditProfile from '../modules/user/views/EditProfile.vue';
-import ChangePassword from '../modules/user/views/ChangePassword.vue';
-import TwoFactorAuth from '../modules/user/views/TwoFactorAuth.vue';
-import PrivacySettings from '../modules/user/views/PrivacySettings.vue';
 
-import Catalog from '../modules/course/views/Catalog.vue';
-import InstructorStudio from '../modules/course/views/InstructorStudio.vue';
-import CoursePlayer from '../modules/course/views/CoursePlayer.vue';
+// ─── Semua halaman menggunakan lazy loading ─────────────────────
+// Vite akan otomatis split menjadi chunk terpisah (code splitting)
+// sehingga browser hanya download JS halaman yang sedang dibuka.
 
+const Login          = () => import('../modules/auth/views/Login.vue');
+const Register       = () => import('../modules/auth/views/Register.vue');
+const ForgotPassword = () => import('../modules/auth/views/ForgotPassword.vue');
+
+const Dashboard      = () => import('../modules/user/views/Dashboard.vue');
+const Profile        = () => import('../modules/user/views/Profile.vue');
+const Achievements   = () => import('../modules/user/views/Achievements.vue');
+const EditProfile    = () => import('../modules/user/views/EditProfile.vue');
+const ChangePassword = () => import('../modules/user/views/ChangePassword.vue');
+const TwoFactorAuth  = () => import('../modules/user/views/TwoFactorAuth.vue');
+const PrivacySettings = () => import('../modules/user/views/PrivacySettings.vue');
+const UpgradePro     = () => import('../modules/user/views/UpgradePro.vue');
+
+const Catalog          = () => import('../modules/course/views/Catalog.vue');
+const InstructorStudio = () => import('../modules/course/views/InstructorStudio.vue');
+const CoursePlayer     = () => import('../modules/course/views/CoursePlayer.vue');
+
+// ─── Route definitions ────────────────────────────────────────────
 const routes = [
     {
         path: '/login',
@@ -59,7 +68,7 @@ const routes = [
             {
                 path: 'courses',
                 name: 'MyCourses',
-                component: CoursePlayer
+                component: () => import('../modules/course/views/CoursePlayer.vue')
             },
             {
                 path: 'profile',
@@ -90,13 +99,13 @@ const routes = [
                 path: 'profile/settings/privacy',
                 name: 'PrivacySettings',
                 component: PrivacySettings
+            },
+            {
+                path: 'upgrade',
+                name: 'UpgradePro',
+                component: UpgradePro
             }
         ]
-    },
-    {
-        // Default route to redirect to login for now
-        path: '/',
-        redirect: '/login'
     }
 ];
 
@@ -105,10 +114,9 @@ const router = createRouter({
     routes,
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {
-            return savedPosition
-        } else {
-            return { top: 0 }
+            return savedPosition;
         }
+        return { top: 0 };
     }
 });
 
