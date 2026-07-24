@@ -1,40 +1,129 @@
 <template>
   <div>
-    <header class="mb-8 flex items-center gap-4">
-      <router-link to="/profile" class="p-2 hover:bg-surface-container rounded-full transition-colors flex items-center justify-center">
-        <span class="material-symbols-outlined text-on-surface">arrow_back</span>
+    <!-- Header -->
+    <header class="mb-10 flex items-center gap-3">
+      <router-link to="/profile" class="p-2 hover:bg-surface-container rounded-full transition-colors">
+        <span class="material-symbols-outlined text-secondary">arrow_back</span>
       </router-link>
       <div>
-        <h1 class="font-headline-md text-headline-md text-on-surface">Galeri Pencapaian</h1>
-        <p class="text-on-surface-variant font-body-md text-body-md">Koleksi semua lencana yang Anda peroleh</p>
+        <h1 class="text-2xl font-bold text-on-surface">Pencapaian</h1>
+        <p class="text-secondary text-sm mt-0.5">{{ unlockedCount }} dari {{ badges.length }} lencana diraih</p>
       </div>
     </header>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <div v-for="(badge, index) in badges" :key="index" class="flex flex-col items-center p-6 border border-surface-container rounded-2xl bg-surface hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-        <div class="rounded-full flex items-center justify-center mb-4 shrink-0" style="width: 80px; height: 80px;" :class="badge.unlocked ? badge.bgColor : 'bg-surface-container-high opacity-50'">
-          <span :class="`material-symbols-outlined text-4xl ${badge.unlocked ? badge.iconColor : 'text-secondary'}`">{{ badge.icon }}</span>
-        </div>
-        <span :class="`font-label-sm text-label-sm text-center mb-2 ${badge.unlocked ? 'text-on-surface' : 'text-on-surface-variant'}`">{{ badge.name }}</span>
-        <span class="text-xs text-center text-on-surface-variant">{{ badge.desc }}</span>
+    <!-- Progress summary -->
+    <div class="mb-10 p-5 bg-surface-container-lowest rounded-2xl border border-surface-container-low shadow-sm flex items-center gap-5">
+      <div class="w-14 h-14 rounded-full border-4 border-primary/20 flex items-center justify-center shrink-0 relative">
+        <span class="font-bold text-primary text-sm">{{ Math.round((unlockedCount / badges.length) * 100) }}%</span>
+        <svg class="absolute inset-0 -rotate-90" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="24" fill="none" stroke="currentColor" stroke-width="4" class="text-surface-container-low"/>
+          <circle cx="28" cy="28" r="24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+            class="text-primary"
+            :stroke-dasharray="`${2 * Math.PI * 24}`"
+            :stroke-dashoffset="`${2 * Math.PI * 24 * (1 - unlockedCount / badges.length)}`"
+            style="transition: stroke-dashoffset 1s ease"
+          />
+        </svg>
+      </div>
+      <div>
+        <p class="font-semibold text-on-surface text-sm">Koleksi lencana kamu berkembang!</p>
+        <p class="text-secondary text-sm mt-0.5">Masih ada <span class="font-semibold text-on-surface">{{ badges.length - unlockedCount }} lencana</span> lagi yang bisa kamu raih.</p>
       </div>
     </div>
+
+    <!-- Unlocked badges -->
+    <section class="mb-10">
+      <h2 class="text-xs font-semibold text-secondary uppercase tracking-widest mb-4">Sudah Diraih</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div
+          v-for="badge in unlockedBadges"
+          :key="badge.name"
+          class="relative flex flex-col items-center text-center p-5 rounded-2xl border border-surface-container bg-surface-container-lowest transition-all duration-200 hover:shadow-md hover:-translate-y-1 cursor-default group"
+        >
+          <!-- Icon -->
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-3 bg-surface-container-low shadow-sm group-hover:scale-110 transition-transform duration-300">
+            <img :src="badge.image" :alt="badge.name" class="w-10 h-10 object-contain drop-shadow-sm" />
+          </div>
+
+          <span class="font-semibold text-sm leading-tight mb-1 text-on-surface">{{ badge.name }}</span>
+          <span class="text-[11px] text-secondary leading-snug">{{ badge.desc }}</span>
+
+          <!-- Tiny earned timestamp -->
+          <span class="mt-3 text-[10px] text-secondary/70 font-medium">{{ badge.earnedAt }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Locked badges -->
+    <section>
+      <h2 class="text-xs font-semibold text-secondary uppercase tracking-widest mb-4">Tantangan Tersisa</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div
+          v-for="badge in lockedBadges"
+          :key="badge.name"
+          class="flex flex-col items-center text-center p-5 rounded-2xl border border-surface-container-low bg-surface/50 opacity-60"
+        >
+          <div class="w-16 h-16 rounded-2xl bg-surface-container-low flex items-center justify-center mb-3 relative grayscale opacity-50">
+            <img :src="badge.image" :alt="badge.name" class="w-10 h-10 object-contain" />
+            <div class="absolute inset-0 flex items-center justify-center bg-surface-container-lowest/30 rounded-2xl">
+              <span class="material-symbols-outlined text-[18px] text-secondary/80 drop-shadow-md">lock</span>
+            </div>
+          </div>
+          <span class="font-semibold text-sm text-secondary/70 leading-tight mb-1">{{ badge.name }}</span>
+          <span class="text-[11px] text-secondary/50 leading-snug">{{ badge.desc }}</span>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const badges = ref([
-  { name: 'Night Owl', desc: 'Belajar di atas jam 12 malam', icon: 'dark_mode', bgColor: 'bg-primary-container/20', iconColor: 'text-primary', unlocked: true },
-  { name: 'Fast Learner', desc: 'Selesai 1 course dalam 1 hari', icon: 'bolt', bgColor: 'bg-tertiary-container/20', iconColor: 'text-tertiary', unlocked: true },
-  { name: '7 Day Streak', desc: 'Login 7 hari berturut-turut', icon: 'local_fire_department', bgColor: 'bg-error-container/20', iconColor: 'text-error', unlocked: true },
-  { name: 'Master of React', desc: 'Selesaikan track React', icon: 'code', bgColor: 'bg-primary-container/20', iconColor: 'text-primary', unlocked: true },
-  { name: 'Social Butterfly', desc: 'Komentar di 10 diskusi', icon: 'forum', bgColor: 'bg-secondary-container/50', iconColor: 'text-secondary', unlocked: true },
-  { name: 'Early Bird', desc: 'Belajar jam 5 pagi', icon: 'wb_sunny', bgColor: '', iconColor: '', unlocked: false },
-  { name: 'Perfect Score', desc: 'Nilai 100 di kuis akhir', icon: 'military_tech', bgColor: '', iconColor: '', unlocked: false },
-  { name: 'Helper', desc: 'Bantu jawab pertanyaan siswa lain', icon: 'volunteer_activism', bgColor: '', iconColor: '', unlocked: false },
-  { name: '30 Day Streak', desc: 'Login 30 hari berturut-turut', icon: 'whatshot', bgColor: '', iconColor: '', unlocked: false },
-  { name: 'Graduated', desc: 'Selesaikan semua course wajib', icon: 'school', bgColor: '', iconColor: '', unlocked: false },
+  {
+    name: 'Pelajar Malam',
+    desc: 'Belajar di atas jam 12 malam',
+    image: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f989/512.webp',
+    earnedAt: '3 hari lalu',
+    unlocked: true,
+  },
+  {
+    name: 'Pelajar Cepat',
+    desc: 'Selesaikan 1 kursus dalam sehari',
+    image: 'https://fonts.gstatic.com/s/e/notoemoji/latest/26a1/512.webp',
+    earnedAt: '1 minggu lalu',
+    unlocked: true,
+  },
+  {
+    name: 'Streak 7 Hari',
+    desc: 'Belajar 7 hari berturut-turut',
+    image: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/512.webp',
+    earnedAt: '5 hari lalu',
+    unlocked: true,
+  },
+  {
+    name: 'Maestro Kode',
+    desc: 'Selesaikan jalur React',
+    image: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4bb/512.webp',
+    earnedAt: 'Minggu ini',
+    unlocked: true,
+  },
+  {
+    name: 'Kupu-Kupu Sosial',
+    desc: 'Komentar di 10 diskusi',
+    image: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f98b/512.webp',
+    earnedAt: '2 minggu lalu',
+    unlocked: true,
+  },
+  { name: 'Burung Pagi', desc: 'Belajar jam 5 pagi', image: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f304/512.webp', unlocked: false },
+  { name: 'Nilai Sempurna', desc: 'Nilai 100 di kuis akhir', image: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f4af/512.webp', unlocked: false },
+  { name: 'Penolong', desc: 'Bantu jawab pertanyaan siswa lain', image: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f91d/512.webp', unlocked: false },
+  { name: 'Streak 30 Hari', desc: 'Belajar 30 hari berturut-turut', image: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/512.webp', unlocked: false },
+  { name: 'Lulus Cumlaude', desc: 'Selesaikan semua kursus wajib', image: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f393/512.webp', unlocked: false },
 ]);
+
+const unlockedBadges = computed(() => badges.value.filter(b => b.unlocked));
+const lockedBadges = computed(() => badges.value.filter(b => !b.unlocked));
+const unlockedCount = computed(() => unlockedBadges.value.length);
 </script>

@@ -120,7 +120,7 @@
       <!-- Active Enrollment Card -->
       <div class="glass-card animate-slide-up p-8 rounded-lg shadow-[0px_20px_40px_rgba(0,0,0,0.08)] flex flex-col" style="animation-delay: 500ms;">
         <h4 class="font-headline-md text-on-surface mb-6">Course Health</h4>
-        <div class="flex-grow space-y-6">
+        <div class="grow space-y-6">
           <div>
             <div class="flex justify-between text-label-sm mb-2">
               <span class="text-secondary">Quiz Completion</span>
@@ -170,7 +170,7 @@
         <table class="w-full text-left">
           <thead>
             <tr class="border-b border-surface-container-low text-secondary font-label-sm uppercase tracking-wider">
-              <th class="pb-4 font-semibold min-w-[250px]">Course Title</th>
+              <th class="pb-4 font-semibold min-w-62.5">Course Title</th>
               <th class="pb-4 font-semibold">Status</th>
               <th class="pb-4 font-semibold">Enrollment</th>
               <th class="pb-4 font-semibold">Revenue</th>

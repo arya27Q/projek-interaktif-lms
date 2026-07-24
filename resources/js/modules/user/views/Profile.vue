@@ -69,7 +69,7 @@
         </section>
         
         <!-- Achievement Gallery -->
-        <section class="bg-surface rounded-[20px] p-6 shadow-[0px_20px_40px_rgba(0,0,0,0.08)] flex-grow">
+        <section class="bg-surface rounded-[20px] p-6 shadow-[0px_20px_40px_rgba(0,0,0,0.08)] grow">
           <div class="flex justify-between items-center mb-6">
             <h2 class="font-headline-md text-headline-md text-on-surface">Galeri Pencapaian</h2>
             <router-link to="/profile/achievements" class="text-primary font-label-sm text-label-sm hover:underline">Lihat Semua</router-link>

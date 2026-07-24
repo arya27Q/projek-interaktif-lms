@@ -4,6 +4,7 @@ import Register from '../modules/auth/views/Register.vue';
 import ForgotPassword from '../modules/auth/views/ForgotPassword.vue';
 
 import UserLayout from '../layouts/UserLayout.vue';
+import Dashboard from '../modules/user/views/Dashboard.vue';
 import Profile from '../modules/user/views/Profile.vue';
 import Achievements from '../modules/user/views/Achievements.vue';
 import EditProfile from '../modules/user/views/EditProfile.vue';
@@ -13,6 +14,7 @@ import PrivacySettings from '../modules/user/views/PrivacySettings.vue';
 
 import Catalog from '../modules/course/views/Catalog.vue';
 import InstructorStudio from '../modules/course/views/InstructorStudio.vue';
+import CoursePlayer from '../modules/course/views/CoursePlayer.vue';
 
 const routes = [
     {
@@ -35,6 +37,11 @@ const routes = [
         component: UserLayout,
         children: [
             {
+                path: '',
+                name: 'Dashboard',
+                component: Dashboard
+            },
+            {
                 path: 'catalog',
                 name: 'Catalog',
                 component: Catalog
@@ -43,6 +50,16 @@ const routes = [
                 path: 'instructor',
                 name: 'InstructorStudio',
                 component: InstructorStudio
+            },
+            {
+                path: 'course/:id',
+                name: 'CoursePlayer',
+                component: CoursePlayer
+            },
+            {
+                path: 'courses',
+                name: 'MyCourses',
+                component: CoursePlayer
             },
             {
                 path: 'profile',

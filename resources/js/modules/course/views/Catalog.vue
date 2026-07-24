@@ -21,52 +21,101 @@
     </section>
 
     <!-- Filter Pills -->
-    <section class="mb-8 flex flex-wrap gap-3">
-      <span class="px-4 py-2 bg-primary text-on-primary rounded-full font-label-sm cursor-pointer shadow-sm">All Categories</span>
-      <span class="px-4 py-2 bg-white text-secondary border border-surface-container-low rounded-full font-label-sm hover:border-primary transition-colors cursor-pointer">Computer Science</span>
-      <span class="px-4 py-2 bg-white text-secondary border border-surface-container-low rounded-full font-label-sm hover:border-primary transition-colors cursor-pointer">Visual Design</span>
-      <span class="px-4 py-2 bg-white text-secondary border border-surface-container-low rounded-full font-label-sm hover:border-primary transition-colors cursor-pointer">Business Strategy</span>
-      <span class="px-4 py-2 bg-white text-secondary border border-surface-container-low rounded-full font-label-sm hover:border-primary transition-colors cursor-pointer">Data Analytics</span>
-      <span class="px-4 py-2 bg-white text-secondary border border-surface-container-low rounded-full font-label-sm hover:border-primary transition-colors cursor-pointer">Marketing</span>
-      <span class="px-4 py-2 bg-white text-secondary border border-surface-container-low rounded-full font-label-sm hover:border-primary transition-colors cursor-pointer">Philosophy</span>
+    <section class="mb-8">
+      <div class="flex flex-wrap gap-3 mb-4">
+        <span 
+          v-for="cat in categories" 
+          :key="cat"
+          @click="selectCategory(cat)"
+          :class="[
+            'px-4 py-2 rounded-full font-label-sm cursor-pointer transition-colors',
+            selectedCategory === cat 
+              ? 'bg-primary text-on-primary shadow-sm' 
+              : 'bg-white text-secondary border border-surface-container-low hover:border-primary'
+          ]"
+        >
+          {{ cat }}
+        </span>
+      </div>
+      
+      <!-- Subcategories for Computer Science -->
+      <div v-if="selectedCategory === 'Computer Science'" class="flex flex-wrap gap-2 pl-4 border-l-2 border-primary-fixed animate-slide-up" style="animation-duration: 0.3s">
+        <span 
+          v-for="sub in csSubcategories" 
+          :key="sub"
+          @click="selectSubcategory(sub)"
+          :class="[
+            'px-3 py-1.5 rounded-full text-[12px] font-label-sm cursor-pointer transition-colors',
+            selectedSubcategory === sub 
+              ? 'bg-tertiary-container text-on-tertiary-container shadow-sm' 
+              : 'bg-surface-container-lowest text-secondary border border-surface-container hover:bg-surface-container-low'
+          ]"
+        >
+          {{ sub }}
+        </span>
+      </div>
     </section>
 
     <!-- Course Grid -->
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-      <div 
-        v-for="(course, index) in visibleCourses" 
-        :key="index"
-        class="course-card group bg-surface-container-lowest rounded-lg p-5 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col h-full transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
-      >
-        <div class="relative w-full h-48 rounded-lg overflow-hidden mb-5 bg-surface-container-high">
-          <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" :alt="course.title" :src="course.thumbnail"/>
-          <div class="absolute top-3 right-3 px-3 py-1 bg-white/90 backdrop-blur-sm text-primary font-label-sm rounded-full">
-            {{ course.rating }} ★
+      <template v-for="(course, index) in visibleCourses" :key="index">
+        <!-- Learning Path Card -->
+        <router-link 
+          :to="'/course/' + (index + 1)"
+          v-if="course.isLearningPath"
+          class="course-card bg-inverse-surface rounded-lg p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col justify-between h-full transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-xl"
+        >
+          <div>
+            <span class="inline-block bg-primary text-on-primary px-3 py-1 rounded-full font-label-sm text-xs font-bold uppercase tracking-wider mb-4">Learning Path</span>
+            <h3 class="font-headline-md text-headline-md text-on-error font-bold leading-tight mb-3">{{ course.title }}</h3>
+            <p class="font-body-md text-secondary-fixed-dim line-clamp-3 mb-6">{{ course.description }}</p>
           </div>
-        </div>
-        <div class="flex-1 flex flex-col">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="px-2 py-0.5 bg-surface-container-low text-secondary font-code text-[12px] rounded uppercase tracking-wider">{{ course.level }}</span>
-            <span class="text-secondary font-label-sm">• {{ course.duration }}</span>
-          </div>
-          <h3 class="font-headline-md text-headline-md text-on-surface mb-3 leading-tight group-hover:text-primary transition-colors line-clamp-2">{{ course.title }}</h3>
-          
-          <!-- Spacer to push instructor down -->
-          <div class="mt-auto flex items-center gap-3 mb-4">
-            <div class="h-8 w-8 rounded-full bg-surface-container-high overflow-hidden border border-surface-variant">
-              <img class="w-full h-full object-cover" :alt="course.instructor" :src="course.instructorAvatar"/>
+          <button class="mt-8 w-full bg-surface-container-lowest text-on-surface font-label-sm py-3 rounded-lg hover:bg-surface-container-low transition-colors font-semibold pointer-events-none">View Path</button>
+        </router-link>
+
+        <!-- Normal / Featured Card -->
+        <router-link 
+          :to="'/course/' + (index + 1)"
+          v-else
+          class="course-card group bg-surface-container-lowest rounded-lg p-5 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col h-full transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
+          :class="{ 'md:col-span-2': course.isFeatured }"
+        >
+          <div class="relative w-full rounded-lg overflow-hidden mb-5 bg-surface-container-high" :class="course.isFeatured ? 'h-64' : 'h-48'">
+            <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" :class="!course.isFeatured && course.level === 'Intermediate' ? 'mix-blend-multiply' : ''" :alt="course.title" :src="course.thumbnail"/>
+            <div v-if="course.isFeatured" class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
+            <div v-if="course.isFeatured" class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 rounded-full font-label-sm text-xs font-bold uppercase tracking-wider">Featured</div>
+            <div :class="course.isFeatured ? 'absolute bottom-4 right-4 text-white font-label-sm' : 'absolute top-3 right-3 px-3 py-1 bg-white/90 backdrop-blur-sm text-primary font-label-sm rounded-full'">
+              {{ course.rating }} ★
             </div>
-            <span class="font-body-md text-secondary">{{ course.instructor }}</span>
           </div>
-        </div>
-        <div class="pt-4 border-t border-surface-container-low flex items-center justify-between">
-          <div class="flex items-center gap-1 text-primary">
-            <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">stars</span>
-            <span class="font-label-sm font-bold">{{ course.exp }} EXP</span>
+          <div class="flex-1 flex flex-col">
+            <div class="flex items-center gap-2 mb-2">
+              <span v-if="course.level" class="px-2 py-0.5 bg-surface-container-low text-secondary font-code text-[12px] rounded uppercase tracking-wider">{{ course.level }}</span>
+              <span v-if="course.duration" class="text-secondary font-label-sm">• {{ course.duration }}</span>
+            </div>
+
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="font-headline-md text-headline-md text-on-surface mb-3 leading-tight group-hover:text-primary transition-colors" :class="{'line-clamp-2': !course.isFeatured}">{{ course.title }}</h3>
+              <button class="text-secondary hover:text-primary transition-colors shrink-0 ml-2"><span class="material-symbols-outlined" :class="{'text-[20px]': !course.isFeatured}">bookmark_border</span></button>
+            </div>
+            <p v-if="course.description" class="font-body-md text-secondary mb-4 line-clamp-2" :class="{'text-sm': !course.isFeatured}">{{ course.description }}</p>
+            
+            <div v-if="course.instructor" class="mt-auto flex items-center gap-3 mb-4">
+              <div v-if="course.isFeatured" class="h-8 w-8 rounded-full bg-surface-container-high overflow-hidden border border-surface-variant grayscale shrink-0">
+                <img class="w-full h-full object-cover" :alt="course.instructor" :src="course.instructorAvatar"/>
+              </div>
+              <span class="font-body-md text-secondary">{{ course.instructor }}</span>
+            </div>
           </div>
-          <span class="font-headline-md text-on-surface">{{ course.price }}</span>
-        </div>
-      </div>
+          <div v-if="course.price || course.exp" class="mt-auto pt-4 border-t border-surface-container-low flex flex-wrap items-center justify-between gap-y-3 gap-x-2">
+            <div v-if="course.exp" class="flex items-center gap-1 text-primary whitespace-nowrap">
+              <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+              <span class="font-label-sm font-bold">{{ course.exp }} EXP</span>
+            </div>
+            <span v-if="course.price" class="font-headline-md text-on-surface whitespace-nowrap shrink-0 ml-auto">{{ course.price }}</span>
+          </div>
+        </router-link>
+      </template>
     </section>
     
     <!-- Pagination/Load More -->
@@ -81,7 +130,7 @@
         <span v-if="isLoading" class="material-symbols-outlined animate-spin">progress_activity</span>
         {{ isLoading ? 'Loading...' : 'Load More Courses' }}
       </button>
-      <p class="font-body-md text-secondary">Showing {{ visibleCourses.length }} of {{ allCourses.length }} courses</p>
+      <p class="font-body-md text-secondary">Showing {{ visibleCourses.length }} of {{ filteredCourses.length }} courses</p>
     </div>
   </div>
 </template>
@@ -89,102 +138,47 @@
 <script setup>
 import { ref, computed } from 'vue';
 
-// The 6 base courses from the original HTML
-const baseCourses = [
-  {
-    title: 'Advanced Systems Architecture & Scaling',
-    level: 'Intermediate',
-    duration: '12h 30m',
-    instructor: 'Dr. Aris Thorne',
-    rating: '4.9',
-    exp: '500',
-    price: '$89.99',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC34pPW97Bpwzwb5JR859P7810vgImBAhLL_rDOKFvMKWUoDbdDIokyt91YvTi55RHebif14A7Dnn4kOjaAv94IkOKEDmVzysVuZIl0PFWCn1PUOAg95cN9cc3ym_xbWFTEKMSo4IqUJ0ceSLKZqn5eRvusu03hCa-oi6el_6xUYgOHGoAKDlTvzGNuz9Ztn2PjKaOKNylOYRZ7C_Lx1NQaAJrEiqosfX7eYcyf-E1HA_0-tn6C5aR9qHgWNPWdv4Y7JD-Ar8K4u4lt',
-    instructorAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDTvov2PRgclMqp1g1ji1_9CKvbBFymNVrnTDHujhIji4BhBF-5gcbQ-qMH28-aOnObRspv4pgufFe6HpRGFlHfhuE1tTmAzMSrZldRDA4A-KnhRPEY9ThlKP1OoRM_spQQsv8jLo2XhnCMhKg-n5JESAiQSy4bkiI2nLOF9oSFX5NwL-gPSB9bO1Z3BZ1-xv1sWnjQRyBIS_0-_YBmBUrQNQKeG5Dhf-59G4BVSwGHZ1SPWEnB8MEiHDcgDv0fx_M-t-e51P5BZMay'
-  },
-  {
-    title: 'Modern Principles of Visual Identity',
-    level: 'Beginner',
-    duration: '8h 15m',
-    instructor: 'Marcus Vane',
-    rating: '4.7',
-    exp: '350',
-    price: '$54.00',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAQx9jqE1XBroMq8yxxzc6-MT_wiklCrMdmKyMSuS4WXwIyCb_AXB2j53fyRlNKoec3oE5BoAwV4nbrvTrPCw2PcINzmHIe5wBxPnZfPQT5x_8u_J-CcAjhx_mlC9Hqy_vEbFopah9QlSstUUKst5Z3eqFN8Aw0DCiULMWq7YK_-jkhcBRJTnEhfcigCB_9OZEyTWrO3ywV8-1KN9pFq29X-VVUapESoQexd13Dq1lm-nVLxQMNUjNlrB4NkjvJx9VdJk1qaKlS8bXn',
-    instructorAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAMIKNEAgwY4y0vn21iItl9CPipYJevEE3PGp2nY_NJceq0YEcd9jbgOPVn9WPUUeC7P7lqeVyxy_FaNm_-H1NelazF_6HUPe0f5xWc3nqvOI2000wOpbpOnPOCHH1QkdB7iznL7ocqAf27nl1fbxunITW2OiIojjbmd2UBp1RT-d-RFPaqRM2A8bu8paQMbix07gRZrMDNlzz-ZmtAyYxCtQY0qlrcGWY4Izy4bC8BLuOXqbM3ePe6EhYzGPyzmjskreqVOOu_lGLT'
-  },
-  {
-    title: 'Algorithmic Trading & Risk Control',
-    level: 'Mastery',
-    duration: '22h 45m',
-    instructor: 'Kenzo Nakamura',
-    rating: '5.0',
-    exp: '1,200',
-    price: '$149.99',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAh3Dr1-VnxIseyTO9B9_Qrp6C9WGZXOFa0-l_FX3bGRkdwdBgV2f8YkYy8G77Jyi8MqWES8pcFGVHY6fVs-nF-9KNnvYbeaq5U86y35cF3p6PYWR7toNAsL6-TXhi-4TbR76kJAe7qDtU1kWdAcmyPrbXe3lU4h_ppMywvqHNuqANfo4K0tlfZ_DWSvXONxH9I8g_AeR3w-u4PP4PhJaNfmsGPmPvwhNqQiQrdzTprE7bBn2cuUxLN9qG7z5h-oLfjHT5jiWQExmjl',
-    instructorAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC1kJcBwnCJFhxEQcpJuLCTpR3KJ5xO59w5pvFWfMdlr0us90F-D-v6ZSWKGbq0OyhYo_cPyDoqHFEqftc8Q2OdmZq4ThLs17nrRYEVxz0JStS6qv7ue-5oUdiLMBdwD9sEfHpT_b3ShyDrhwUGa-2FeTfS8juoA_DA6QA80GgY7yCD9MuqB4q9ID1derR9v11Q_vmk15rjt81whi9hgjhXTPugi2aK7l2lcD7eRKuwuuPjyzqgW1PosTKXUt6NEZ3gPdMu_RL61SLs'
-  },
-  {
-    title: 'Foundations of Cognitive Science',
-    level: 'Beginner',
-    duration: '6h 20m',
-    instructor: 'Dr. Elena Rodriguez',
-    rating: '4.8',
-    exp: '250',
-    price: '$45.00',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBwV5HrUkFPhEknjGFc2OluwtAfyt25X-gOl8KI-rPaKPLy-uSyPid8LnFoNpxYR-x6uofMFJUC32kenYxVy1tGnVkcGu1GRGCRLt_-vZ8miokzMaxzmpWFmXMrWZg-QWYS7nHcMinIHRng8nnsckSGgfwY-1cwoukqKqd1VMyiWDLuiqvtVghBmQTUKexdzdSXHdKY2n1eqnWR4AHQ7HxkNREr6NRDrtWNjEJ88jPCqMx467F3UJpn263KJcM8s_2AkA0lWsM26ahf',
-    instructorAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDC98uovb7c0DmTIw0SCVE9C1xi6Ood1Cj95yoGNtLX-BjIBCiV1dPyurIWAx_O6LuUDHUKccjNpvNwQ07hDB9rmX0oOMttPU65qklpzdsWdLGe-RM-oJKrUs9FAb03W6NhW6z3GKwMAR-dAOq-_Dy5FkgYCQncB1mdUPpJDo7cfEN6B8jCGxl4YyIzl3JrIQW3qntkaHzq4RNtMUie1ODtnJegMRResS701Ep86mzN1pO2wPDkcdKpnm6o6AMm2kZeyaFf6n0pNYeJ'
-  },
-  {
-    title: 'Creative Writing & Narrative Design',
-    level: 'Intermediate',
-    duration: '14h 0m',
-    instructor: 'Julian Pierce',
-    rating: '4.6',
-    exp: '450',
-    price: '$68.00',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAWQjWbEZpmCtu3v3CQEuhAeb42hdEPGT89XaLp5WrVCnL89zU2cDt1czRMWqfdWxEsvc_3j3XiS7YwsHU10CcPLD8q76jWO9n7-KCRmA5NfSI3ZEA8qFv3HKkeVYbp1MgLgaN8hOF7Aj6PXxWdMO-UtpUCxTV6ewi08Qgr1J6NkLQ0icgZCmTU90eVrWqdkqAIbM0AoQ68wMmK4MR4VkeHK7CjY8L2RZoL7hjeXGM34pYddr0DRfC_h-f0nSupSvEJK94GwbOT5PXh',
-    instructorAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBNWBb9-37--hZpJw3KhJMRVLs39q6hYG8bfg6n8cEEyV7frg7C07L_wHpHkea1sG9hxvYQFTcLkvYVj-oZoJaG3k9ts7YHf-AXUSnDSuph42NAt0NYBDi5y8evm30mM5HeHEkHN_1Tr97ltOGGUViEGROKgZVG9RrnXgWJ6DB8n_4EJ3KC4a1fK3YzXMvPuOxD4kLadbk6ezkXq6N7DPE_1SHqkPlzrxyvCbLAWT0veyB1WO7Pvmj04U5qzbtYVnsE2N7ejyAOht9D'
-  },
-  {
-    title: 'Strategic Leadership in Global Markets',
-    level: 'Mastery',
-    duration: '30h 15m',
-    instructor: 'Sarah Jenkins, MBA',
-    rating: '4.9',
-    exp: '2,000',
-    price: '$199.00',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAb8r-K61iN3J2AiQGRaqxoHvHrFSm-se1rGkpTQNA4vXALYoKT-CI0oCk_c2df4eNl1ppsw9Bz_5o7vrg2ND9aTSKQtcOGzXc1MMy4Tr_NktpW51XAO22ttsw1d-10O3X6tTZKX2jX9j63KkXgDKjnnGyz_mJVx0xi7K4p8ehd-JLido2tjwSWfsMaOQiDmES1v-0FmBvT4fZNts-wKVKi2z7ls99ksDWUwNXWiVOke9FYrz4evLiYgcyHpQrWJE7jdGdrWu25vE7c',
-    instructorAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBLOl7pCIU98yWmPgtPDHJX2mNQd0kcXccW7LaeQNmKoxRzyW8ozYL3n7aZoJxjTQPopg7vUbV9d84s0JCtq02fBrKZw7C96P-QRCa7LU4saxjiZKOJS6C1MDuu7NERKbrKA5uMEWiG5hZ_3eIvDquxYQLGbzrHNwTdcUCekDg7iqKweXSnV8WkrbE-dFNybIykaPhYWxOxvnke30S-GXrwUrALSyYa0Nzh4SnpdHMrW3XUXISGucmEcqqxkzUw0rPxf_ax1xFVDYBq'
-  }
-];
+import { categories, csSubcategories, generateCourses } from '../../../data/mockCourses.js';
 
-// Generate a large list of courses by cloning the base ones with a slight modification
-const generateCourses = (count) => {
-  const result = [];
-  for (let i = 0; i < count; i++) {
-    const baseIndex = i % baseCourses.length;
-    const base = baseCourses[baseIndex];
-    result.push({
-      ...base,
-      // Add a suffix to make titles look unique
-      title: i >= baseCourses.length ? `${base.title} (Vol. ${Math.floor(i / baseCourses.length) + 1})` : base.title
-    });
+const selectedCategory = ref('All Categories');
+const selectedSubcategory = ref('All CS');
+
+const selectCategory = (cat) => {
+  selectedCategory.value = cat;
+  if (cat !== 'Computer Science') {
+    selectedSubcategory.value = 'All CS';
   }
-  return result;
+  visibleCount.value = 6;
+};
+
+const selectSubcategory = (sub) => {
+  selectedSubcategory.value = sub;
+  visibleCount.value = 6;
 };
 
 // State
-const allCourses = ref(generateCourses(245)); // Generate 245 courses as per the original HTML text "Showing 6 of 245 courses"
+const allCourses = ref(generateCourses(245));
 const visibleCount = ref(6);
 const isLoading = ref(false);
 
+const filteredCourses = computed(() => {
+  return allCourses.value.filter(course => {
+    if (selectedCategory.value !== 'All Categories' && course.category !== selectedCategory.value) {
+      return false;
+    }
+    if (selectedCategory.value === 'Computer Science' && selectedSubcategory.value !== 'All CS' && course.subcategory !== selectedSubcategory.value) {
+      return false;
+    }
+    return true;
+  });
+});
+
 const visibleCourses = computed(() => {
-  return allCourses.value.slice(0, visibleCount.value);
+  return filteredCourses.value.slice(0, visibleCount.value);
 });
 
 const hasMore = computed(() => {
-  return visibleCount.value < allCourses.value.length;
+  return visibleCount.value < filteredCourses.value.length;
 });
 
 const loadMore = () => {
