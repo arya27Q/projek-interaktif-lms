@@ -19,8 +19,8 @@
     </div>
 
     <!-- Stats Bento Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div class="glass-card animate-slide-up p-6 rounded-lg shadow-[0px_10px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-transform" style="animation-delay: 0ms;">
+    <div class="flex xl:grid xl:grid-cols-4 overflow-x-auto xl:overflow-visible gap-4 sm:gap-6 pb-10 -mb-2 pt-4 -mt-4 px-2 -mx-2 snap-x xl:snap-none custom-scrollbar">
+      <div class="glass-card flex-1 shrink-0 min-w-70 sm:min-w-75 xl:min-w-0 snap-start animate-slide-up p-6 rounded-lg shadow-[0px_10px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-transform" style="animation-delay: 0ms;">
         <div class="flex items-center justify-between mb-4">
           <div class="p-2 bg-primary-fixed rounded-lg text-primary">
             <span class="material-symbols-outlined">group</span>
@@ -28,9 +28,9 @@
           <span class="text-xs font-bold text-tertiary-container bg-tertiary-fixed px-2 py-1 rounded-full">+12,5%</span>
         </div>
         <p class="text-secondary font-label-sm mb-1 uppercase tracking-wider">Total Siswa</p>
-        <h3 class="text-display-lg font-bold">14.284</h3>
+        <h3 class="text-3xl font-bold whitespace-nowrap">14.284</h3>
       </div>
-      <div class="glass-card animate-slide-up p-6 rounded-lg shadow-[0px_10px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-transform" style="animation-delay: 100ms;">
+      <div class="glass-card flex-1 shrink-0 min-w-70 sm:min-w-75 xl:min-w-0 snap-start animate-slide-up p-6 rounded-lg shadow-[0px_10px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-transform" style="animation-delay: 100ms;">
         <div class="flex items-center justify-between mb-4">
           <div class="p-2 bg-tertiary-fixed rounded-lg text-tertiary">
             <span class="material-symbols-outlined">payments</span>
@@ -38,9 +38,9 @@
           <span class="text-xs font-bold text-primary-container bg-primary-fixed px-2 py-1 rounded-full">+8,2%</span>
         </div>
         <p class="text-secondary font-label-sm mb-1 uppercase tracking-wider">Pendapatan Bersih</p>
-        <h3 class="text-display-lg font-bold">Rp 392 jt</h3>
+        <h3 class="text-3xl font-bold whitespace-nowrap">Rp 392 jt</h3>
       </div>
-      <div class="glass-card animate-slide-up p-6 rounded-lg shadow-[0px_10px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-transform" style="animation-delay: 200ms;">
+      <div class="glass-card flex-1 shrink-0 min-w-70 sm:min-w-75 xl:min-w-0 snap-start animate-slide-up p-6 rounded-lg shadow-[0px_10px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-transform" style="animation-delay: 200ms;">
         <div class="flex items-center justify-between mb-4">
           <div class="p-2 bg-surface-container-high rounded-lg text-on-surface-variant">
             <span class="material-symbols-outlined">timer</span>
@@ -48,9 +48,9 @@
           <span class="text-xs font-bold text-secondary bg-surface-container-high px-2 py-1 rounded-full">-2,1%</span>
         </div>
         <p class="text-secondary font-label-sm mb-1 uppercase tracking-wider">Rata-rata Durasi Tonton</p>
-        <h3 class="text-display-lg font-bold">42m</h3>
+        <h3 class="text-3xl font-bold whitespace-nowrap">42m</h3>
       </div>
-      <div class="glass-card animate-slide-up p-6 rounded-lg shadow-[0px_10px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-transform" style="animation-delay: 300ms;">
+      <div class="glass-card flex-1 shrink-0 min-w-70 sm:min-w-75 xl:min-w-0 snap-start animate-slide-up p-6 rounded-lg shadow-[0px_10px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 transition-transform" style="animation-delay: 300ms;">
         <div class="flex items-center justify-between mb-4">
           <div class="p-2 bg-primary-fixed rounded-lg text-primary">
             <span class="material-symbols-outlined">grade</span>
@@ -58,14 +58,13 @@
           <span class="text-xs font-bold text-primary-container bg-primary-fixed px-2 py-1 rounded-full">Stabil</span>
         </div>
         <p class="text-secondary font-label-sm mb-1 uppercase tracking-wider">Rating Kursus</p>
-        <h3 class="text-display-lg font-bold">4.88</h3>
+        <h3 class="text-3xl font-bold whitespace-nowrap">4.88</h3>
       </div>
     </div>
 
-    <!-- Analytics Visualizations -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
       <!-- Drop-off Rate Chart -->
-      <div class="lg:col-span-2 glass-card animate-slide-up p-8 rounded-lg shadow-[0px_20px_40px_rgba(0,0,0,0.08)]" style="animation-delay: 400ms;">
+      <div class="xl:col-span-2 glass-card animate-slide-up p-8 rounded-lg shadow-[0px_20px_40px_rgba(0,0,0,0.08)]" style="animation-delay: 400ms;">
         <div class="flex items-center justify-between mb-8">
           <div>
             <h4 class="font-headline-md text-on-surface">Analisis Retensi Video</h4>
@@ -167,15 +166,15 @@
         </button>
       </div>
       <div class="overflow-x-auto">
-        <table class="w-full text-left">
+        <table class="w-full text-left min-w-225">
           <thead>
-            <tr class="border-b border-surface-container-low text-secondary font-label-sm uppercase tracking-wider">
-              <th class="pb-4 font-semibold min-w-62.5">Judul Kursus</th>
-              <th class="pb-4 font-semibold">Status</th>
-              <th class="pb-4 font-semibold">Pendaftar</th>
-              <th class="pb-4 font-semibold">Pendapatan</th>
-              <th class="pb-4 font-semibold">Rating</th>
-              <th class="pb-4 font-semibold text-right">Aksi</th>
+            <tr class="border-b border-surface-container-low text-secondary font-label-sm uppercase tracking-wider whitespace-nowrap">
+              <th class="pb-4 font-semibold min-w-75">Judul Kursus</th>
+              <th class="pb-4 font-semibold px-4">Status</th>
+              <th class="pb-4 font-semibold px-4">Pendaftar</th>
+              <th class="pb-4 font-semibold px-4">Pendapatan</th>
+              <th class="pb-4 font-semibold px-4">Rating</th>
+              <th class="pb-4 font-semibold text-right pl-4">Aksi</th>
             </tr>
           </thead>
           <tbody class="font-body-md text-on-surface">
@@ -192,11 +191,11 @@
                   </div>
                 </div>
               </td>
-              <td class="py-6">
-                <span class="px-3 py-1 bg-primary-fixed text-primary text-[10px] font-bold rounded-full uppercase tracking-tighter">Aktif</span>
+              <td class="py-6 px-4">
+                <span class="px-3 py-1 bg-primary-fixed text-primary text-[10px] font-bold rounded-full uppercase tracking-tighter whitespace-nowrap">Aktif</span>
               </td>
-              <td class="py-6 font-bold">8.421</td>
-              <td class="py-6">Rp 199.200.000</td>
+              <td class="py-6 px-4 font-bold">8.421</td>
+              <td class="py-6 px-4 whitespace-nowrap">Rp 199.200.000</td>
               <td class="py-6">
                 <div class="flex items-center gap-1 text-tertiary">
                   <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
@@ -228,12 +227,12 @@
                   </div>
                 </div>
               </td>
-              <td class="py-6">
-                <span class="px-3 py-1 bg-primary-fixed text-primary text-[10px] font-bold rounded-full uppercase tracking-tighter">Aktif</span>
+              <td class="py-6 px-4">
+                <span class="px-3 py-1 bg-primary-fixed text-primary text-[10px] font-bold rounded-full uppercase tracking-tighter whitespace-nowrap">Aktif</span>
               </td>
-              <td class="py-6 font-bold">5.863</td>
-              <td class="py-6">Rp 145.920.000</td>
-              <td class="py-6">
+              <td class="py-6 px-4 font-bold">5.862</td>
+              <td class="py-6 px-4 whitespace-nowrap">Rp 145.020.000</td>
+              <td class="py-6 px-4">
                 <div class="flex items-center gap-1 text-tertiary">
                   <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
                   <span class="font-bold">4.8</span>
@@ -264,12 +263,12 @@
                   </div>
                 </div>
               </td>
-              <td class="py-6">
-                <span class="px-3 py-1 bg-surface-container-high text-secondary text-[10px] font-bold rounded-full uppercase tracking-tighter">Draf</span>
+              <td class="py-6 px-4">
+                <span class="px-3 py-1 bg-surface-container-high text-secondary text-[10px] font-bold rounded-full uppercase tracking-tighter whitespace-nowrap">Draf</span>
               </td>
-              <td class="py-6 font-bold">--</td>
-              <td class="py-6">--</td>
-              <td class="py-6">
+              <td class="py-6 px-4 font-bold">-</td>
+              <td class="py-6 px-4 whitespace-nowrap">-</td>
+              <td class="py-6 px-4">
                 <div class="flex items-center gap-1 text-secondary">
                   <span class="material-symbols-outlined text-[16px]">star</span>
                   <span class="font-bold">N/A</span>

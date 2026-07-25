@@ -1,17 +1,17 @@
 <template>
-  <!-- Overlay yang muncul di DALAM video container -->
-  <transition
-    enter-active-class="transition duration-400 ease-out"
-    enter-from-class="opacity-0"
-    enter-to-class="opacity-100"
-    leave-active-class="transition duration-300 ease-in"
-    leave-from-class="opacity-100"
-    leave-to-class="opacity-0"
-  >
-    <div
-      v-if="modelValue"
-      class="absolute inset-0 z-20 flex items-end justify-center bg-black/65 backdrop-blur-[2px] pb-6 px-4"
+  <Teleport to="body">
+    <transition
+      enter-active-class="transition duration-400 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition duration-300 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
     >
+      <div
+        v-if="modelValue"
+        class="fixed inset-0 z-100 flex items-center justify-center bg-black/65 backdrop-blur-[2px] p-4"
+      >
       <!-- Kartu Quiz -->
       <transition
         enter-active-class="transition duration-400 ease-out"
@@ -114,7 +114,8 @@
         </div>
       </transition>
     </div>
-  </transition>
+    </transition>
+  </Teleport>
 </template>
 
 <script setup>

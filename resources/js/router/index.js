@@ -7,22 +7,24 @@ import UserLayout from '../layouts/UserLayout.vue';
 // Vite akan otomatis split menjadi chunk terpisah (code splitting)
 // sehingga browser hanya download JS halaman yang sedang dibuka.
 
-const Login          = () => import('../modules/auth/views/Login.vue');
-const Register       = () => import('../modules/auth/views/Register.vue');
+const Login = () => import('../modules/auth/views/Login.vue');
+const Register = () => import('../modules/auth/views/Register.vue');
 const ForgotPassword = () => import('../modules/auth/views/ForgotPassword.vue');
 
-const Dashboard      = () => import('../modules/user/views/Dashboard.vue');
-const Profile        = () => import('../modules/user/views/Profile.vue');
-const Achievements   = () => import('../modules/user/views/Achievements.vue');
-const EditProfile    = () => import('../modules/user/views/EditProfile.vue');
+const Dashboard = () => import('../modules/dashboard/views/Dashboard.vue');
+const Profile = () => import('../modules/user/views/Profile.vue');
+const Achievements = () => import('../modules/user/views/Achievements.vue');
+const EditProfile = () => import('../modules/user/views/EditProfile.vue');
 const ChangePassword = () => import('../modules/user/views/ChangePassword.vue');
-const TwoFactorAuth  = () => import('../modules/user/views/TwoFactorAuth.vue');
+const TwoFactorAuth = () => import('../modules/user/views/TwoFactorAuth.vue');
 const PrivacySettings = () => import('../modules/user/views/PrivacySettings.vue');
-const UpgradePro     = () => import('../modules/user/views/UpgradePro.vue');
+const UpgradePro = () => import('../modules/user/views/UpgradePro.vue');
+const Certificate = () => import('../modules/user/views/Certificate.vue');
 
-const Catalog          = () => import('../modules/course/views/Catalog.vue');
+const Catalog = () => import('../modules/course/views/Catalog.vue');
 const InstructorStudio = () => import('../modules/course/views/InstructorStudio.vue');
-const CoursePlayer     = () => import('../modules/course/views/CoursePlayer.vue');
+const CoursePlayer = () => import('../modules/course/views/CoursePlayer.vue');
+const PeerReview = () => import('../modules/course/views/PeerReview.vue');
 
 // ─── Route definitions ────────────────────────────────────────────
 const routes = [
@@ -66,6 +68,11 @@ const routes = [
                 component: CoursePlayer
             },
             {
+                path: 'course/:id/assignment',
+                name: 'PeerReview',
+                component: PeerReview
+            },
+            {
                 path: 'courses',
                 name: 'MyCourses',
                 component: () => import('../modules/course/views/CoursePlayer.vue')
@@ -104,6 +111,11 @@ const routes = [
                 path: 'upgrade',
                 name: 'UpgradePro',
                 component: UpgradePro
+            },
+            {
+                path: 'certificate/:id',
+                name: 'Certificate',
+                component: Certificate
             }
         ]
     }

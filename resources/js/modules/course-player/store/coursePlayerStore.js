@@ -19,6 +19,14 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
   // Daftar modul & pelajaran
   const modules = ref([
     {
+      id: 0,
+      title: 'Modul 0: Dasar-dasar Sistem',
+      isBypassed: true,
+      lessons: [
+        { id: 101, title: 'Sejarah Desain UI', duration: '15:00', completed: true, locked: false }
+      ]
+    },
+    {
       id: 1,
       title: 'Modul 4: Kerangka Global',
       lessons: [
@@ -33,6 +41,14 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
       lessons: [
         { id: 4, title: 'Teori Micro-interaksi', duration: '32:10', completed: false, locked: true },
         { id: 5, title: 'Animasi & Desain Gerak', duration: '28:05', completed: false, locked: true },
+      ]
+    },
+    {
+      id: 3,
+      title: 'Modul 5.1: Remedial Transisi',
+      isRemedial: true,
+      lessons: [
+        { id: 6, title: 'Dasar Animasi Transisi (Review)', duration: '10:05', completed: false, locked: false }
       ]
     }
   ]);
@@ -55,6 +71,7 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
       likes: 12,
       replies: 3,
       createdAt: '4 jam lalu',
+      videoTimestamp: 120,
       isSolved: false
     },
     {
@@ -65,6 +82,7 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
       likes: 8,
       replies: 1,
       createdAt: 'Kemarin',
+      videoTimestamp: 450,
       isSolved: true
     }
   ]);

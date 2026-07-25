@@ -85,9 +85,46 @@
     <!-- Top Navigation Bar (Desktop) -->
     <header class="hidden lg:flex items-center justify-between fixed top-0 right-0 left-64 z-30 px-8 h-16 ml-floating-gap mr-floating-gap mt-floating-gap bg-surface-container-lowest rounded-lg shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low">
       <!-- Search Bar Area -->
-      <div class="flex-1 max-w-md relative focus-within:max-w-xl transition-all duration-300">
+      <div class="flex-1 max-w-md relative focus-within:max-w-xl transition-all duration-300 z-50">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-[20px]">search</span>
-        <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-transparent rounded-full font-label-sm text-on-surface focus:border-primary focus:ring-0 transition-all outline-none" placeholder="Cari kursus, topik, atau keahlian..." type="text"/>
+        <input
+          v-model="searchQuery"
+          @focus="isSearchFocused = true"
+          @blur="handleSearchBlur"
+          class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-transparent rounded-full font-label-sm text-on-surface focus:border-primary focus:bg-surface-container-lowest focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+          placeholder="Cari kursus, topik, atau keahlian..."
+          type="text"
+        />
+        
+        <!-- Search Dropdown Results -->
+        <div v-if="isSearchFocused && searchQuery.length > 0" class="absolute top-full mt-2 w-full bg-surface-container-lowest border border-surface-container-low rounded-xl shadow-[0px_20px_40px_rgba(0,0,0,0.1)] overflow-hidden animate-in fade-in slide-in-from-top-2">
+          <div class="p-2 border-b border-surface-container-low">
+            <span class="text-[10px] font-bold text-secondary uppercase tracking-wider px-2">Hasil untuk "{{ searchQuery }}"</span>
+          </div>
+          <div class="max-h-64 overflow-y-auto">
+            <router-link to="/course/1" class="flex items-center gap-3 p-3 hover:bg-surface-container-low transition-colors">
+              <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined">play_circle</span>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-on-surface">Mastering Advanced CSS</p>
+                <p class="text-[11px] text-secondary">Kursus • 24 Modul</p>
+              </div>
+            </router-link>
+            <router-link to="/catalog" class="flex items-center gap-3 p-3 hover:bg-surface-container-low transition-colors border-t border-surface-container-low/50">
+              <div class="w-10 h-10 rounded-lg bg-tertiary/10 text-tertiary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined">forum</span>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-on-surface">Cara mengatasi z-index menumpuk</p>
+                <p class="text-[11px] text-secondary">Diskusi • UI/UX Design</p>
+              </div>
+            </router-link>
+          </div>
+          <div class="p-2 bg-surface-container-low/50 border-t border-surface-container-low text-center">
+            <button class="text-xs font-bold text-primary hover:underline">Lihat semua hasil pencarian</button>
+          </div>
+        </div>
       </div>
       <!-- Trailing Actions -->
       <div class="flex items-center gap-6 ml-4">
@@ -144,4 +181,13 @@
 import { ref } from 'vue';
 
 const isMobileMenuOpen = ref(false);
+const searchQuery = ref('');
+const isSearchFocused = ref(false);
+
+const handleSearchBlur = () => {
+  // Delay slightly so clicks on dropdown items can register before it disappears
+  setTimeout(() => {
+    isSearchFocused.value = false;
+  }, 200);
+};
 </script>

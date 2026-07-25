@@ -31,6 +31,29 @@
       </div>
     </div>
 
+    <!-- Certificates -->
+    <section class="mb-10">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xs font-semibold text-secondary uppercase tracking-widest">Sertifikat Kelulusan</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Certificate Card -->
+        <router-link to="/certificate/1" class="group flex gap-4 p-5 rounded-2xl border border-surface-container bg-surface-container-lowest transition-all hover:border-primary hover:shadow-lg">
+          <div class="w-16 h-16 rounded-xl bg-primary/10 text-primary flex flex-col items-center justify-center shrink-0 border border-primary/20 group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-[24px]">workspace_premium</span>
+            <span class="text-[9px] font-bold mt-0.5 tracking-wider uppercase">Pro</span>
+          </div>
+          <div class="flex flex-col justify-center">
+            <h3 class="font-bold text-on-surface text-sm group-hover:text-primary transition-colors">Mastering Advanced CSS Layouts</h3>
+            <p class="text-xs text-secondary mt-1">Diterbitkan: 25 Juli 2026</p>
+            <span class="text-primary text-xs font-bold mt-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0">
+              Lihat Sertifikat <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </span>
+          </div>
+        </router-link>
+      </div>
+    </section>
+
     <!-- Unlocked badges -->
     <section class="mb-10">
       <h2 class="text-xs font-semibold text-secondary uppercase tracking-widest mb-4">Sudah Diraih</h2>
