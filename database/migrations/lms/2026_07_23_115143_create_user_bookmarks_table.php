@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('user_bookmarks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('lesson_id')->constrained('lessons')->cascadeOnDelete();
+            $table->integer('timestamp')->default(0);
+            $table->text('note_text')->nullable();
             $table->timestamps();
         });
     }

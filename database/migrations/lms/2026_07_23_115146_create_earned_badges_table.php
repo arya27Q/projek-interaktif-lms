@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('earned_badges', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('badge_name');
+            $table->timestamp('earned_at')->useCurrent();
             $table->timestamps();
         });
     }

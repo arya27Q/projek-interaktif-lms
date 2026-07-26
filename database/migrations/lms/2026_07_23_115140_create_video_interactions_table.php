@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('video_interactions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('lesson_id')->constrained('lessons')->cascadeOnDelete();
+            $table->integer('timestamp_trigger')->default(0);
+            $table->json('quiz_payload')->nullable();
             $table->timestamps();
         });
     }

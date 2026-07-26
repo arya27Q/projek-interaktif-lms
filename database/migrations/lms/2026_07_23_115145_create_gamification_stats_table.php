@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('gamification_stats', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
             $table->integer('current_streak')->default(0);
             $table->integer('total_exp')->default(0);
             $table->string('rank_tier')->default('bronze');
