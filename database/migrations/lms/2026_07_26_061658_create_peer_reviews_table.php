@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('discussions', function (Blueprint $table) {
+        Schema::create('peer_reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id')->nullable()->constrained('discussions')->cascadeOnDelete();
-            $table->integer('upvotes_count')->default(0);
+            $table->foreignId('submission_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('reviewer_id')->constrained('users')->cascadeOnDelete();
+            $table->integer('score')->nullable();
+            $table->text('feedback_comment')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('discussions');
+        Schema::dropIfExists('peer_reviews');
     }
 };

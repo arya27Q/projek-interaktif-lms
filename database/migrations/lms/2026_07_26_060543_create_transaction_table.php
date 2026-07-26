@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gamification_stats', function (Blueprint $table) {
+        Schema::create('transaction', function (Blueprint $table) {
             $table->id();
+            $table->string('midtrans_order_id')->unique();
+            $table->string('transaction_id')->nullable();
+            $table->decimal('amount', 10, 2);
+            $table->string('payment_method');
+            $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->integer('current_streak')->default(0);
-            $table->integer('total_exp')->default(0);
-            $table->string('rank_tier')->default('bronze');
-            $table->timestamp('last_login_date')->nullable();
+            $table->foreignId('course_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gamification_stats');
+        Schema::dropIfExists('transaction');
     }
 };

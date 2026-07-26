@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gamification_stats', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->integer('current_streak')->default(0);
-            $table->integer('total_exp')->default(0);
-            $table->string('rank_tier')->default('bronze');
-            $table->timestamp('last_login_date')->nullable();
+            $table->string('plan_name');
+            $table->timestamp('expires_at')->nullable();
+            $table->enum('status', ['active', 'expired', 'cancelled'])->default('active');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gamification_stats');
+        Schema::dropIfExists('subscriptions');
     }
 };

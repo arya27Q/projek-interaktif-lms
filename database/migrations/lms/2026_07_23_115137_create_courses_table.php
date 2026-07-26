@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
+            $table->string('category');
+            $table->enum('level', ['beginner', 'intermediate', 'advanced'])->default('beginner');
+            $table->string('thumbnail_url')->nullable();
+            $table->decimal('average_rating', 2, 1)->default(0.0);
             $table->timestamps();
         });
     }
