@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:h-[calc(100vh-140px)] flex flex-col lg:flex-row gap-4 md:gap-6 w-full lg:overflow-x-auto lg:snap-x lg:snap-mandatory custom-scrollbar pb-2">
+  <div class="lg:h-[calc(100vh-140px)] flex flex-col lg:flex-row gap-4 md:gap-6 w-full lg:overflow-x-auto lg:snap-x lg:snap-mandatory pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
     
     <!-- ════════════════════════════════════════
          Kolom Kiri: Video Player (70%)

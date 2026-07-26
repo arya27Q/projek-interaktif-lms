@@ -25,6 +25,7 @@ const Catalog = () => import('../modules/course/views/Catalog.vue');
 const InstructorStudio = () => import('../modules/course/views/InstructorStudio.vue');
 const CoursePlayer = () => import('../modules/course/views/CoursePlayer.vue');
 const PeerReview = () => import('../modules/course/views/PeerReview.vue');
+const Checkout = () => import('../modules/course/views/Checkout.vue');
 
 // ─── Route definitions ────────────────────────────────────────────
 const routes = [
@@ -71,6 +72,11 @@ const routes = [
                 path: 'course/:id/assignment',
                 name: 'PeerReview',
                 component: PeerReview
+            },
+            {
+                path: 'checkout/:id',
+                name: 'Checkout',
+                component: Checkout
             },
             {
                 path: 'courses',

@@ -4,16 +4,16 @@
     <section class="mb-12">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 class="font-display-lg-mobile text-display-lg-mobile lg:font-display-lg lg:text-display-lg text-on-surface mb-2">Explore the Catalog</h2>
-          <p class="font-body-lg text-secondary max-w-2xl">Master new skills with our expert-led curricula. Each course is designed to challenge your understanding and accelerate your career growth.</p>
+          <h2 class="font-display-lg-mobile text-display-lg-mobile lg:font-display-lg lg:text-display-lg text-on-surface mb-2">Jelajahi Katalog</h2>
+          <p class="font-body-lg text-secondary max-w-2xl">Kuasai keahlian baru dengan kurikulum dari para ahli. Setiap kursus dirancang untuk menantang pemahamanmu dan mempercepat pertumbuhan kariermu.</p>
         </div>
         <div class="flex gap-4">
           <button class="flex items-center gap-2 px-6 py-3 bg-surface-container-highest text-on-surface font-label-sm rounded-lg hover:bg-surface-variant transition-colors">
             <span class="material-symbols-outlined">tune</span>
-            Filters
+            Filter
           </button>
           <button class="flex items-center gap-2 px-6 py-3 bg-on-surface text-surface font-label-sm rounded-lg hover:-translate-y-0.5 transition-transform">
-            Sort: Popularity
+            Urutkan: Terpopuler
             <span class="material-symbols-outlined">expand_more</span>
           </button>
         </div>
@@ -39,7 +39,7 @@
       </div>
       
       <!-- Subcategories for Computer Science -->
-      <div v-if="selectedCategory === 'Computer Science'" class="flex flex-wrap gap-2 pl-4 border-l-2 border-primary-fixed animate-slide-up" style="animation-duration: 0.3s">
+      <div v-if="selectedCategory === 'Ilmu Komputer'" class="flex flex-wrap gap-2 pl-4 border-l-2 border-primary-fixed animate-slide-up" style="animation-duration: 0.3s">
         <span 
           v-for="sub in csSubcategories" 
           :key="sub"
@@ -61,21 +61,21 @@
       <template v-for="(course, index) in visibleCourses" :key="index">
         <!-- Learning Path Card -->
         <router-link 
-          :to="'/course/' + (index + 1)"
+          :to="'/checkout/' + (index + 1)"
           v-if="course.isLearningPath"
           class="course-card bg-inverse-surface rounded-lg p-8 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col justify-between h-full transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-xl"
         >
           <div>
-            <span class="inline-block bg-primary text-on-primary px-3 py-1 rounded-full font-label-sm text-xs font-bold uppercase tracking-wider mb-4">Learning Path</span>
+            <span class="inline-block bg-primary text-on-primary px-3 py-1 rounded-full font-label-sm text-xs font-bold uppercase tracking-wider mb-4">Alur Belajar</span>
             <h3 class="font-headline-md text-headline-md text-on-error font-bold leading-tight mb-3">{{ course.title }}</h3>
             <p class="font-body-md text-secondary-fixed-dim line-clamp-3 mb-6">{{ course.description }}</p>
           </div>
-          <button class="mt-8 w-full bg-surface-container-lowest text-on-surface font-label-sm py-3 rounded-lg hover:bg-surface-container-low transition-colors font-semibold pointer-events-none">View Path</button>
+          <button class="mt-8 w-full bg-surface-container-lowest text-on-surface font-label-sm py-3 rounded-lg hover:bg-surface-container-low transition-colors font-semibold pointer-events-none">Lihat Alur</button>
         </router-link>
 
         <!-- Normal / Featured Card -->
         <router-link 
-          :to="'/course/' + (index + 1)"
+          :to="'/checkout/' + (index + 1)"
           v-else
           class="course-card group bg-surface-container-lowest rounded-lg p-5 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low flex flex-col h-full transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
           :class="{ 'md:col-span-2': course.isFeatured }"
@@ -83,7 +83,7 @@
           <div class="relative w-full rounded-lg overflow-hidden mb-5 bg-surface-container-high" :class="course.isFeatured ? 'h-64' : 'h-48'">
             <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" :class="!course.isFeatured && course.level === 'Intermediate' ? 'mix-blend-multiply' : ''" :alt="course.title" :src="course.thumbnail"/>
             <div v-if="course.isFeatured" class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
-            <div v-if="course.isFeatured" class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 rounded-full font-label-sm text-xs font-bold uppercase tracking-wider">Featured</div>
+            <div v-if="course.isFeatured" class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 rounded-full font-label-sm text-xs font-bold uppercase tracking-wider">Pilihan</div>
             <div :class="course.isFeatured ? 'absolute bottom-4 right-4 text-white font-label-sm' : 'absolute top-3 right-3 px-3 py-1 bg-white/90 backdrop-blur-sm text-primary font-label-sm rounded-full'">
               {{ course.rating }} ★
             </div>
@@ -128,9 +128,9 @@
         :disabled="isLoading"
       >
         <span v-if="isLoading" class="material-symbols-outlined animate-spin">progress_activity</span>
-        {{ isLoading ? 'Loading...' : 'Load More Courses' }}
+        {{ isLoading ? 'Memuat...' : 'Muat Lebih Banyak Kursus' }}
       </button>
-      <p class="font-body-md text-secondary">Showing {{ visibleCourses.length }} of {{ filteredCourses.length }} courses</p>
+      <p class="font-body-md text-secondary">Menampilkan {{ visibleCourses.length }} dari {{ filteredCourses.length }} kursus</p>
     </div>
   </div>
 </template>
@@ -140,13 +140,13 @@ import { ref, computed } from 'vue';
 
 import { categories, csSubcategories, generateCourses } from '../../../data/mockCourses.js';
 
-const selectedCategory = ref('All Categories');
-const selectedSubcategory = ref('All CS');
+const selectedCategory = ref('Semua Kategori');
+const selectedSubcategory = ref('Semua');
 
 const selectCategory = (cat) => {
   selectedCategory.value = cat;
-  if (cat !== 'Computer Science') {
-    selectedSubcategory.value = 'All CS';
+  if (cat !== 'Ilmu Komputer') {
+    selectedSubcategory.value = 'Semua';
   }
   visibleCount.value = 6;
 };
@@ -163,10 +163,10 @@ const isLoading = ref(false);
 
 const filteredCourses = computed(() => {
   return allCourses.value.filter(course => {
-    if (selectedCategory.value !== 'All Categories' && course.category !== selectedCategory.value) {
+    if (selectedCategory.value !== 'Semua Kategori' && course.category !== selectedCategory.value) {
       return false;
     }
-    if (selectedCategory.value === 'Computer Science' && selectedSubcategory.value !== 'All CS' && course.subcategory !== selectedSubcategory.value) {
+    if (selectedCategory.value === 'Ilmu Komputer' && selectedSubcategory.value !== 'Semua' && course.subcategory !== selectedSubcategory.value) {
       return false;
     }
     return true;
