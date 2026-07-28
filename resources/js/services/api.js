@@ -6,7 +6,7 @@
  * Ganti BASE_URL dengan URL API Laravel kamu.
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? '/api';
+const BASE_URL = '';
 
 // ─── HTTP Helper ──────────────────────────────────────────────────
 
@@ -14,6 +14,7 @@ async function request(method, endpoint, body = null, options = {}) {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
         ...options.headers,
     };
 
@@ -21,6 +22,12 @@ async function request(method, endpoint, body = null, options = {}) {
     const token = localStorage.getItem('auth_token');
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    // Ambil CSRF token untuk keamanan form POST Laravel
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (csrfToken) {
+        headers['X-CSRF-TOKEN'] = csrfToken.content;
     }
 
     const config = {
@@ -51,20 +58,20 @@ async function request(method, endpoint, body = null, options = {}) {
     return text ? JSON.parse(text) : null;
 }
 
-const get    = (url, options)        => request('GET', url, null, options);
-const post   = (url, body, options)  => request('POST', url, body, options);
-const put    = (url, body, options)  => request('PUT', url, body, options);
-const patch  = (url, body, options)  => request('PATCH', url, body, options);
-const del    = (url, options)        => request('DELETE', url, null, options);
+const get = (url, options) => request('GET', url, null, options);
+const post = (url, body, options) => request('POST', url, body, options);
+const put = (url, body, options) => request('PUT', url, body, options);
+const patch = (url, body, options) => request('PATCH', url, body, options);
+const del = (url, options) => request('DELETE', url, null, options);
 
 // ─── Auth ─────────────────────────────────────────────────────────
 export const authApi = {
-    login:          (credentials)  => post('/auth/login', credentials),
-    register:       (data)         => post('/auth/register', data),
-    logout:         ()             => post('/auth/logout'),
-    forgotPassword: (email)        => post('/auth/forgot-password', { email }),
-    resetPassword:  (data)         => post('/auth/reset-password', data),
-    me:             ()             => get('/auth/me'),
+    login: (credentials) => post('/login', credentials),
+    register: (data) => post('/register', data),
+    logout: () => post('/logout'),
+    forgotPassword: (email) => post('/aut/forgot-password', { email }),
+    resetPassword: (data) => post('/auth/reset-password', data),
+    me: () => get('/auth/me'),
 };
 
 // ─── Courses ──────────────────────────────────────────────────────
@@ -77,48 +84,48 @@ export const courseApi = {
     },
 
     // Detail satu kursus
-    getById:    (id)                 => get(`/courses/${id}`),
+    getById: (id) => get(`/courses/${id}`),
 
     // Cari kursus
-    search:     (keyword)            => get(`/courses/search?q=${encodeURIComponent(keyword)}`),
+    search: (keyword) => get(`/courses/search?q=${encodeURIComponent(keyword)}`),
 
     // Kursus yang sedang diikuti user
-    getMyCourses: ()                 => get('/courses/my'),
+    getMyCourses: () => get('/courses/my'),
 
     // Enroll ke kursus
-    enroll:     (courseId)           => post(`/courses/${courseId}/enroll`),
+    enroll: (courseId) => post(`/courses/${courseId}/enroll`),
 
     // Tandai pelajaran selesai
     completeLesson: (courseId, lessonId) => patch(`/courses/${courseId}/lessons/${lessonId}/complete`),
 
     // Progress
-    getProgress: (courseId)          => get(`/courses/${courseId}/progress`),
+    getProgress: (courseId) => get(`/courses/${courseId}/progress`),
 };
 
 // ─── User / Profile ───────────────────────────────────────────────
 export const userApi = {
-    getProfile:     ()               => get('/user/profile'),
-    updateProfile:  (data)           => put('/user/profile', data),
-    changePassword: (data)           => put('/user/password', data),
-    getAchievements: ()              => get('/user/achievements'),
-    getActivity:    ()               => get('/user/activity'),
-    update2FA:      (data)           => post('/user/2fa', data),
-    updatePrivacy:  (data)           => put('/user/privacy', data),
+    getProfile: () => get('/user/profile'),
+    updateProfile: (data) => put('/user/profile', data),
+    changePassword: (data) => put('/user/password', data),
+    getAchievements: () => get('/user/achievements'),
+    getActivity: () => get('/user/activity'),
+    update2FA: (data) => post('/user/2fa', data),
+    updatePrivacy: (data) => put('/user/privacy', data),
 };
 
 // ─── Gamification ─────────────────────────────────────────────────
 export const gamificationApi = {
     getLeaderboard: (period = 'weekly') => get(`/gamification/leaderboard?period=${period}`),
-    getStreak:      ()                   => get('/gamification/streak'),
-    getBadges:      ()                   => get('/gamification/badges'),
-    claimBadge:     (badgeId)            => post(`/gamification/badges/${badgeId}/claim`),
+    getStreak: () => get('/gamification/streak'),
+    getBadges: () => get('/gamification/badges'),
+    claimBadge: (badgeId) => post(`/gamification/badges/${badgeId}/claim`),
 };
 
 // ─── Catalog ──────────────────────────────────────────────────────
 export const catalogApi = {
-    getCategories:    ()              => get('/catalog/categories'),
-    getFeatured:      ()              => get('/catalog/featured'),
-    getByCategory:    (slug, params)  => {
+    getCategories: () => get('/catalog/categories'),
+    getFeatured: () => get('/catalog/featured'),
+    getByCategory: (slug, params) => {
         const query = new URLSearchParams(params).toString();
         return get(`/catalog/${slug}${query ? `?${query}` : ''}`);
     },
@@ -126,17 +133,17 @@ export const catalogApi = {
 
 // ─── Quiz ─────────────────────────────────────────────────────────
 export const quizApi = {
-    getQuiz:        (quizId)          => get(`/quizzes/${quizId}`),
-    submitAnswer:   (quizId, data)    => post(`/quizzes/${quizId}/answer`, data),
-    getResult:      (attemptId)       => get(`/quizzes/attempts/${attemptId}`),
+    getQuiz: (quizId) => get(`/quizzes/${quizId}`),
+    submitAnswer: (quizId, data) => post(`/quizzes/${quizId}/answer`, data),
+    getResult: (attemptId) => get(`/quizzes/attempts/${attemptId}`),
 };
 
 // ─── Default export (opsional, untuk penggunaan umum) ─────────────
 export default {
-    auth:         authApi,
-    course:       courseApi,
-    user:         userApi,
+    auth: authApi,
+    course: courseApi,
+    user: userApi,
     gamification: gamificationApi,
-    catalog:      catalogApi,
-    quiz:         quizApi,
+    catalog: catalogApi,
+    quiz: quizApi,
 };

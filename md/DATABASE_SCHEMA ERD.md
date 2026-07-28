@@ -1,142 +1,176 @@
-# Skema Database LMS (Entity-Relationship Diagram)
-
-Berikut adalah visualisasi hubungan antar tabel (relasi) dalam database LMS kita. Anda dapat melihat bagaimana tabel `users` (pengguna) terhubung ke tabel `courses` (kursus), `enrollments` (pendaftaran), pembayaran, hingga fitur gamifikasi dan diskusi.
+# Database Entity Relationship Diagram (ERD)
 
 ```mermaid
 erDiagram
-    USERS ||--o{ COURSES : "creates (instructor)"
+    %% Core Entities
+    USERS {
+        bigint id PK
+        string name
+        string email
+        string password
+    }
+    COURSES {
+        bigint id PK
+        bigint instructor_id FK
+        string title
+        string slug
+        text description
+        decimal price
+        string category
+        string level
+        string thumbnail_url
+        decimal average_rating
+        string status
+    }
+    MODULES {
+        bigint id PK
+        bigint course_id FK
+        string title
+        integer order_index
+        boolean is_remedial
+    }
+    LESSONS {
+        bigint id PK
+        bigint module_id FK
+        string title
+        string type
+        string media_url
+    }
+    VIDEO_INTERACTIONS {
+        bigint id PK
+        bigint lesson_id FK
+        integer timestamp_trigger
+        json quiz_payload
+    }
+    ASSIGNMENTS {
+        bigint id PK
+        bigint lesson_id FK
+        text instructions
+        json rubric_json
+    }
+    SUBMISSIONS {
+        bigint id PK
+        bigint assignment_id FK
+        bigint user_id FK
+        string file_url
+        string status
+    }
+    PEER_REVIEWS {
+        bigint id PK
+        bigint submission_id FK
+        bigint reviewer_id FK
+        integer score
+        text feedback_comment
+    }
+
+    %% User Activity
+    ENROLLMENTS {
+        bigint id PK
+        bigint user_id FK
+        bigint course_id FK
+        integer progress_percent
+        string status
+        timestamp enrolled_at
+    }
+    QUIZ_ATTEMPTS {
+        bigint id PK
+        bigint user_id FK
+        bigint lesson_id FK
+        integer score
+        boolean passed
+    }
+    USER_BOOKMARKS {
+        bigint id PK
+        bigint user_id FK
+        bigint lesson_id FK
+        integer timestamp
+        text note_text
+    }
+    VIDEO_WATCH_LOGS {
+        bigint id PK
+        bigint user_id FK
+        bigint lesson_id FK
+        integer watched_seconds
+        integer max_timestamp_reached
+    }
+    DISCUSSIONS {
+        bigint id PK
+        bigint user_id FK
+        bigint course_id FK
+        bigint lesson_id FK "nullable"
+        bigint parent_id FK "nullable"
+        integer timestamp_context "nullable"
+        text message
+        integer upvotes_count
+    }
+
+    %% Gamification
+    GAMIFICATION_STATS {
+        bigint id PK
+        bigint user_id FK
+        integer current_streak
+        integer total_exp
+        string rank_tier
+        timestamp last_login_date "nullable"
+    }
+    EARNED_BADGES {
+        bigint id PK
+        bigint user_id FK
+        string badge_name
+        timestamp earned_at
+    }
+
+    %% Finance
+    TRANSACTION {
+        bigint id PK
+        bigint user_id FK
+        bigint course_id FK "nullable"
+        string midtrans_order_id
+        string transaction_id "nullable"
+        decimal amount
+        string payment_method "nullable"
+        string status
+    }
+    SUBSCRIPTIONS {
+        bigint id PK
+        bigint user_id FK
+        string plan_name
+        string status
+        timestamp starts_at
+        timestamp expires_at "nullable"
+    }
+
+    %% Relationships
+    USERS ||--o{ COURSES : "instructs"
     USERS ||--o{ ENROLLMENTS : "has"
-    USERS ||--o{ TRANSACTIONS : "makes"
-    USERS ||--o{ SUBSCRIPTIONS : "has"
+    USERS ||--o{ QUIZ_ATTEMPTS : "takes"
+    USERS ||--o{ USER_BOOKMARKS : "creates"
+    USERS ||--o{ VIDEO_WATCH_LOGS : "logs"
     USERS ||--o{ DISCUSSIONS : "writes"
-    USERS ||--o{ VIDEO_WATCH_LOGS : "records"
     USERS ||--o{ SUBMISSIONS : "submits"
     USERS ||--o{ PEER_REVIEWS : "reviews"
     USERS ||--|| GAMIFICATION_STATS : "has"
     USERS ||--o{ EARNED_BADGES : "earns"
+    USERS ||--o{ TRANSACTION : "makes"
+    USERS ||--o{ SUBSCRIPTIONS : "has"
 
     COURSES ||--o{ MODULES : "contains"
     COURSES ||--o{ ENROLLMENTS : "has"
-    COURSES ||--o{ TRANSACTIONS : "purchased via"
+    COURSES ||--o{ TRANSACTION : "purchased via"
     COURSES ||--o{ DISCUSSIONS : "has"
-    
+
     MODULES ||--o{ LESSONS : "contains"
-    
-    LESSONS ||--o{ VIDEO_WATCH_LOGS : "tracked by"
-    LESSONS ||--o{ QUIZ_ATTEMPTS : "has"
-    LESSONS ||--o{ DISCUSSIONS : "has"
+
+    LESSONS ||--o{ VIDEO_INTERACTIONS : "has popups"
     LESSONS ||--o{ ASSIGNMENTS : "has"
-    
+    LESSONS ||--o{ QUIZ_ATTEMPTS : "has"
+    LESSONS ||--o{ USER_BOOKMARKS : "bookmarked via"
+    LESSONS ||--o{ VIDEO_WATCH_LOGS : "tracked by"
+    LESSONS ||--o{ DISCUSSIONS : "has"
+
     ASSIGNMENTS ||--o{ SUBMISSIONS : "receives"
-    
+
     SUBMISSIONS ||--o{ PEER_REVIEWS : "gets"
-
-    %% Table Definitions
-    USERS {
-        int id PK
-        string name
-        string email
-        string role "admin, instructor, student"
-    }
     
-    COURSES {
-        int id PK
-        int instructor_id FK
-        string title
-        decimal price
-        string status
-    }
-    
-    MODULES {
-        int id PK
-        int course_id FK
-        string title
-        int order
-    }
-    
-    LESSONS {
-        int id PK
-        int module_id FK
-        string title
-        string type "video, quiz, text"
-    }
-    
-    ENROLLMENTS {
-        int id PK
-        int user_id FK
-        int course_id FK
-        datetime enrolled_at
-    }
-    
-    TRANSACTIONS {
-        int id PK
-        int user_id FK
-        int course_id FK
-        string status "pending, success, failed"
-    }
-    
-    SUBSCRIPTIONS {
-        int id PK
-        int user_id FK
-        string plan
-        datetime expires_at
-    }
-    
-    DISCUSSIONS {
-        int id PK
-        int user_id FK
-        int course_id FK
-        int lesson_id FK
-        text content
-    }
-    
-    VIDEO_WATCH_LOGS {
-        int id PK
-        int user_id FK
-        int lesson_id FK
-        int progress_seconds
-        boolean is_completed
-    }
-    
-    ASSIGNMENTS {
-        int id PK
-        int lesson_id FK
-        string title
-    }
-    
-    SUBMISSIONS {
-        int id PK
-        int assignment_id FK
-        int user_id FK
-        string file_url
-        decimal grade
-    }
-    
-    PEER_REVIEWS {
-        int id PK
-        int submission_id FK
-        int reviewer_id FK
-        int score
-    }
-    
-    GAMIFICATION_STATS {
-        int id PK
-        int user_id FK
-        int level
-        int total_exp
-    }
-    
-    EARNED_BADGES {
-        int id PK
-        int user_id FK
-        string badge_name
-    }
+    DISCUSSIONS ||--o{ DISCUSSIONS : "replies to (parent_id)"
 ```
-
-## Penjelasan Relasi Utama
-
-1. **User & Course**: Seorang User (sebagai Instruktur) bisa membuat banyak *Course*. User (sebagai Siswa) bisa terdaftar (Enrollment) di banyak *Course*.
-2. **Struktur Pembelajaran**: *Course* memiliki banyak *Modules*, dan setiap *Module* memiliki banyak *Lessons* (Video, Kuis, Materi, Tugas).
-3. **Tracking & Evaluasi**: Aktivitas siswa dilacak di `VIDEO_WATCH_LOGS`, `QUIZ_ATTEMPTS`, dan `SUBMISSIONS` (untuk tugas).
-4. **Keuangan**: Pembelian dicatat di `TRANSACTIONS` (kursus satuan) atau `SUBSCRIPTIONS` (berlangganan bulanan).
-5. **Gamifikasi**: Data level dan poin siswa disimpan di `GAMIFICATION_STATS`, sedangkan medali/pencapaian disimpan di `EARNED_BADGES`.

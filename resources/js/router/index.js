@@ -138,4 +138,29 @@ const router = createRouter({
     }
 });
 
+// ─── SATPAM FRONTEND (Vue Navigation Guard) ───
+router.beforeEach((to, from, next) => {
+    // 1. Cek di kantong browser, ada tiket tanda masuk nggak?
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+    // 2. Daftar halaman yang boleh dimasukin tanpa tiket
+    const publicPages = ['/login', '/register', '/forgot-password'];
+    const authRequired = !publicPages.includes(to.path);
+
+    // 3. Aturan Satpam:
+    if (authRequired && !isLoggedIn) {
+        // Belum login maksa masuk ke dalam? TENDANG KE LOGIN!
+        return next('/login');
+    }
+
+    if (!authRequired && isLoggedIn) {
+        // Udah login tapi iseng buka form login lagi? TENDANG KE DALAM!
+        return next('/');
+    }
+
+    // Kalau semua aman, silakan lewat
+    next();
+});
+
+
 export default router;

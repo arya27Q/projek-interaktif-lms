@@ -7,6 +7,16 @@
       <div class="absolute bottom-[-20%] left-[20%] w-80 h-80 bg-secondary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
     </div>
     
+    <!-- Toast Notification (Glassmorphism) -->
+    <transition name="toast-fade">
+      <div v-if="toast.show" 
+           :class="['fixed top-10 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-xl border border-white/20 z-[100] flex items-center gap-3 transition-all min-w-[300px] justify-center',
+           toast.type === 'success' ? 'bg-emerald-500/90 text-white' : 'bg-rose-500/90 text-white']">
+        <span class="material-symbols-outlined text-2xl">{{ toast.type === 'success' ? 'check_circle' : 'error' }}</span>
+        <p class="font-body-md font-medium tracking-wide">{{ toast.message }}</p>
+      </div>
+    </transition>
+
     <!-- Registration Card -->
     <main class="w-full max-w-md z-10">
       <div class="glass-card rounded-[20px] p-6 md:p-10 w-full relative overflow-hidden">
@@ -48,11 +58,12 @@
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="material-symbols-outlined text-outline">lock</span>
               </div>
-              <input v-model="form.password" class="input-field block w-full pl-10 pr-3 py-3 font-body-md text-body-md bg-surface-container-lowest text-on-background" id="password" placeholder="Minimal 8 karakter" required :type="showPassword ? 'text' : 'password'"/>
+              <input v-model="form.password" class="input-field block w-full pl-10 pr-3 py-3 font-body-md text-body-md bg-surface-container-lowest text-on-background" id="password" placeholder="Minimal 8 karakter & 1 simbol" required :type="showPassword ? 'text' : 'password'"/>
               <button @click="showPassword = !showPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-on-background transition-colors focus:outline-none" type="button">
                 <span class="material-symbols-outlined">{{ showPassword ? 'visibility' : 'visibility_off' }}</span>
               </button>
             </div>
+            <p class="text-xs text-on-surface-variant mt-1 font-medium">Aturan: Min. 8 karakter & wajib ada 1 simbol (contoh: @, #, $, !)</p>
           </div>
           
           <!-- Confirm Password -->
@@ -93,9 +104,13 @@
   </div>
 </template>
 
+
 <script setup>
 import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { authApi } from '@/services/api';
 
+const router = useRouter();
 const showPassword = ref(false);
 
 const form = reactive({
@@ -106,9 +121,57 @@ const form = reactive({
   terms: false,
 });
 
-const handleRegister = () => {
-  // TODO: Handle registration logic
-  console.log('Registering...', form);
+const toast = reactive({ show: false, message: '', type: 'success' });
+
+const showToast = (msg, type = 'success') => {
+  toast.message = msg;
+  toast.type = type;
+  toast.show = true;
+  setTimeout(() => { toast.show = false; }, 3000);
+};
+
+const handleRegister = async () => {
+  // Validasi di Frontend sebelum nyapa Satpam Backend
+  if (form.password.length < 8) {
+    return showToast('Kata sandi kekpendekan bro! Minimal 8 huruf/angka.', 'error');
+  }
+  
+  const adaSimbol = /[!@#$%^&*(),.?":{}|<>\-_+=\/\[\]~]/.test(form.password);
+  if (!adaSimbol) {
+    return showToast('Kata sandinya harus ada simbolnya bro! (contoh: @, #, $, dll)', 'error');
+  }
+
+  if (form.password !== form.password_confirmation) {
+    return showToast('Password yang kamu ketik ulang nggak sama bro.', 'error');
+  }
+
+  if (!form.terms) {
+    return showToast('Kamu harus setuju sama Syarat & Ketentuan dulu.', 'error');
+  }
+
+  try {
+    const response = await authApi.register({
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      password_confirmation: form.password_confirmation
+    });
+    
+    // Jangan langsung login, biarkan user login manual
+    // localStorage.setItem('isLoggedIn', 'true'); 
+    
+    showToast(response.message, 'success');
+    // Arahkan ke halaman login
+    setTimeout(() => router.push('/login'), 2000);
+    
+  } catch (error) {
+    let errorMsg = error.message;
+    // Deteksi kalau Laravel ngasih halaman HTML (berarti user udah login atau session error)
+    if (errorMsg.includes('Unexpected token')) {
+      errorMsg = "Oops! Sepertinya kamu sudah login, atau sesi-mu bermasalah. Coba refresh halaman!";
+    }
+    showToast(errorMsg, 'error');
+  }
 };
 </script>
 
@@ -138,5 +201,19 @@ const handleRegister = () => {
   border-width: 2px;
   outline: none;
   box-shadow: none;
+}
+
+/* Animasi Toast */
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.toast-fade-enter-from {
+  opacity: 0;
+  transform: translate(-50%, -20px);
+}
+.toast-fade-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -20px);
 }
 </style>

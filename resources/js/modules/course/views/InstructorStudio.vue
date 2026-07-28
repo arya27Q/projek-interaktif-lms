@@ -293,7 +293,7 @@
 </template>
 
 <script setup>
-// Animasi ditangani via CSS untuk integrasi Vue yang lebih bersih
+
 </script>
 
 <style scoped>

@@ -20,9 +20,9 @@
           <router-link @click="isMobileMenuOpen = false" to="/profile/settings/privacy" class="px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container flex items-center gap-3 text-sm transition-colors">
             <span class="material-symbols-outlined text-[20px]">settings</span> Settings
           </router-link>
-          <router-link @click="isMobileMenuOpen = false" to="/login" class="px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container flex items-center gap-3 border-t border-surface-container-low text-sm transition-colors">
+          <button @click="handleLogout" class="w-full text-left px-4 py-3 text-secondary hover:text-primary hover:bg-surface-container flex items-center gap-3 border-t border-surface-container-low text-sm transition-colors">
             <span class="material-symbols-outlined text-[20px]">logout</span> Logout
-          </router-link>
+          </button>
         </div>
       </div>
     </nav>
@@ -74,10 +74,10 @@
             <span class="material-symbols-outlined">settings</span>
             <span class="font-body-md">Pengaturan</span>
           </router-link>
-          <router-link to="/login" class="flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <button @click="handleLogout" class="w-full text-left flex items-center gap-3 p-3 rounded-lg text-secondary hover:bg-surface-container-low hover:text-primary transition-all duration-200">
             <span class="material-symbols-outlined">logout</span>
             <span class="font-body-md">Keluar</span>
-          </router-link>
+          </button>
         </div>
       </div>
     </aside>
@@ -179,7 +179,10 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { authApi } from '@/services/api';
 
+const router = useRouter();
 const isMobileMenuOpen = ref(false);
 const searchQuery = ref('');
 const isSearchFocused = ref(false);
@@ -189,5 +192,24 @@ const handleSearchBlur = () => {
   setTimeout(() => {
     isSearchFocused.value = false;
   }, 200);
+};
+
+const handleLogout = async () => {
+  try {
+    // Panggil API logout Laravel buat ngancurin session/cookie
+    await authApi.logout();
+  } catch (e) {
+    // Abaikan kalau API gagal (misal server mati)
+  }
+  
+  // Hapus tiket masuk dari browser
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('auth_token'); // Buat jaga-jaga kalau dipake
+
+  // Tutup menu mobile kalau lagi kebuka
+  isMobileMenuOpen.value = false;
+  
+  // Balik ke halaman login
+  router.push('/login');
 };
 </script>

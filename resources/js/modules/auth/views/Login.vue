@@ -1,5 +1,15 @@
 <template>
   <div class="bg-pattern min-h-screen flex items-center justify-center p-4 md:p-8 font-body-md text-on-surface w-full">
+    <!-- Toast Notification (Glassmorphism) -->
+    <transition name="toast-fade">
+      <div v-if="toast.show" 
+           :class="['fixed top-10 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-xl border border-white/20 z-[100] flex items-center gap-3 transition-all min-w-[300px] justify-center',
+           toast.type === 'success' ? 'bg-emerald-500/90 text-white' : 'bg-rose-500/90 text-white']">
+        <span class="material-symbols-outlined text-2xl">{{ toast.type === 'success' ? 'check_circle' : 'error' }}</span>
+        <p class="font-body-md font-medium tracking-wide">{{ toast.message }}</p>
+      </div>
+    </transition>
+
     <!-- Suppress navigation shell as this is a transactional page (Login) -->
     <main class="w-full max-w-md bg-surface-container-lowest rounded-3xl shadow-[0px_20px_40px_rgba(0,0,0,0.08)] border border-surface-container-high p-6 md:p-8 flex flex-col items-center">
       <div class="mb-6 md:mb-8 text-center">
@@ -68,7 +78,10 @@
 
 <script setup>
 import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { authApi } from '@/services/api';
 
+const router = useRouter()
 const showPassword = ref(false);
 
 const form = reactive({
@@ -76,8 +89,49 @@ const form = reactive({
   password: '',
 });
 
-const handleLogin = () => {
-  // TODO: Handle login logic
-  console.log('Logging in...', form);
+const toast = reactive({ show: false, message: '', type: 'success' });
+
+const showToast = (msg, type = 'success') => {
+  toast.message = msg;
+  toast.type = type;
+  toast.show = true;
+  setTimeout(() => { toast.show = false; }, 3000);
+};
+
+const handleLogin = async() => {
+ try {
+  const response = await authApi.login({
+    email: form.email,
+    password: form.password
+  });
+
+  localStorage.setItem('isLoggedIn', 'true'); 
+
+  showToast(response.message, 'success');
+  setTimeout(() => router.push('/'), 2000);
+
+ } catch (error){
+  let errorMsg = error.message;
+  if (errorMsg.includes('Unexpected token')) {
+    errorMsg = "Sesi bermasalah atau kamu sudah login. Coba refresh halamannya!";
+  }
+  showToast(errorMsg, 'error');
+ }
 };
 </script>
+
+<style scoped>
+/* Animasi Toast */
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.toast-fade-enter-from {
+  opacity: 0;
+  transform: translate(-50%, -20px);
+}
+.toast-fade-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -20px);
+}
+</style>
