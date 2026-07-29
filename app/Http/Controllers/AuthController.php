@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Socialite\Facades\Socialite;
+
 
 class AuthController extends Controller
 {
@@ -75,4 +77,47 @@ class AuthController extends Controller
             
         ]);
     }
+
+    // lempar ke google/github
+    
+    public function redirectSocial(string $provider)
+    {
+        return Socialite::driver($provider)->redirect();
+    }
+
+    // Fungsi buat nerima data pas user selesai milih akun di Google/GitHub
+    public function callbackSocial(string $provider)
+    {
+        try {
+            $socialUser = Socialite::driver($provider)->user();
+            
+            // Cek apakah user udah pernah daftar pake email ini
+            $user = User::query()->where('email', $socialUser->getEmail())->first();
+            
+            if (!$user) {
+                // jika belum auto daftar
+                $user = User::create([
+                    'name' => $socialUser->getName() ?? $socialUser->getNickname(),
+                    'email' => $socialUser->getEmail(),
+                    'provider' => $provider,
+                    'provider_id' => $socialUser->getId(),
+                    'password' => null, // Password kosongin aja
+                ]);
+            } else {
+                // jika ada update data providernya
+                $user->update([
+                    'provider' => $provider,
+                    'provider_id' => $socialUser->getId(),
+                ]);
+            }
+
+            Auth::login($user);
+            return redirect('/login?social_success=1');
+
+        } catch (\Exception $e) {
+            return redirect('/login?social_error=1');
+        }
+    }
+    
+    
 }

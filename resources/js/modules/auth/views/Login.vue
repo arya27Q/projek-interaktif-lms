@@ -3,7 +3,7 @@
     <!-- Toast Notification (Glassmorphism) -->
     <transition name="toast-fade">
       <div v-if="toast.show" 
-           :class="['fixed top-10 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-xl border border-white/20 z-[100] flex items-center gap-3 transition-all min-w-[300px] justify-center',
+           :class="['fixed top-10 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-xl border border-white/20 z-100 flex items-center gap-3 transition-all min-w-75 justify-center',
            toast.type === 'success' ? 'bg-emerald-500/90 text-white' : 'bg-rose-500/90 text-white']">
         <span class="material-symbols-outlined text-2xl">{{ toast.type === 'success' ? 'check_circle' : 'error' }}</span>
         <p class="font-body-md font-medium tracking-wide">{{ toast.message }}</p>
@@ -52,7 +52,7 @@
       </div>
 
       <div class="w-full flex flex-col gap-3">
-        <button class="w-full bg-surface-container-low text-on-surface font-label-sm text-label-sm py-3 px-4 rounded-full border border-outline-variant hover:bg-surface-container transition-colors flex items-center justify-center gap-2" type="button">
+        <a href="http://127.0.0.1:8000/auth/google/redirect" class="w-full bg-surface-container-low text-on-surface font-label-sm text-label-sm py-3 px-4 rounded-full border border-outline-variant hover:bg-surface-container transition-colors flex items-center justify-center gap-2">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25C22.56 11.47 22.49 10.72 22.36 10H12V14.26H17.92C17.67 15.63 16.89 16.81 15.73 17.58V20.34H19.3C21.38 18.42 22.56 15.6 22.56 12.25Z" fill="#4285F4"></path>
             <path d="M12 23C14.97 23 17.46 22.02 19.3 20.34L15.73 17.58C14.74 18.25 13.48 18.66 12 18.66C9.14 18.66 6.71 16.73 5.84 14.14H2.15V16.99C3.96 20.6 7.69 23 12 23Z" fill="#34A853"></path>
@@ -60,13 +60,13 @@
             <path d="M12 5.34C13.62 5.34 15.07 5.9 16.21 6.99L19.39 3.8C17.45 2 14.97 1 12 1C7.69 1 3.96 3.4 2.15 7.01L5.84 9.86C6.71 7.27 9.14 5.34 12 5.34Z" fill="#EA4335"></path>
           </svg>
           Google
-        </button>
-        <button class="w-full bg-surface-container-low text-on-surface font-label-sm text-label-sm py-3 px-4 rounded-full border border-outline-variant hover:bg-surface-container transition-colors flex items-center justify-center gap-2" type="button">
+        </a>
+        <a href="http://127.0.0.1:8000/auth/github/redirect" class="w-full bg-surface-container-low text-on-surface font-label-sm text-label-sm py-3 px-4 rounded-full border border-outline-variant hover:bg-surface-container transition-colors flex items-center justify-center gap-2">
           <svg class="w-5 h-5 text-on-surface" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12C2 16.42 4.867 20.166 8.833 21.488C9.333 21.579 9.52 21.272 9.52 21.008C9.52 20.77 9.511 19.99 9.506 19.123C6.724 19.727 6.137 17.973 6.137 17.973C5.682 16.818 5.029 16.51 5.029 16.51C4.126 15.892 5.097 15.904 5.097 15.904C6.096 15.974 6.621 16.93 6.621 16.93C7.508 18.45 8.948 18.01 9.539 17.755C9.629 17.086 9.899 16.647 10.198 16.398C7.976 16.145 5.642 15.285 5.642 11.472C5.642 10.386 6.031 9.497 6.666 8.795C6.564 8.542 6.223 7.531 6.764 6.155C6.764 6.155 7.599 5.888 9.502 7.175C10.297 6.953 11.15 6.843 12 6.839C12.85 6.843 13.704 6.953 14.499 7.175C16.401 5.888 17.235 6.155 17.235 6.155C17.777 7.531 17.437 8.542 17.335 8.795C17.972 9.497 18.359 10.386 18.359 11.472C18.359 15.295 16.023 16.142 13.795 16.388C14.169 16.711 14.502 17.348 14.502 18.312C14.502 19.693 14.49 20.808 14.49 21.008C14.49 21.275 14.674 21.585 15.178 21.487C19.141 20.163 22 16.418 22 12C22 6.477 17.523 2 12 2Z" fill-rule="evenodd"></path>
           </svg>
           GitHub
-        </button>
+        </a>
       </div>
 
       <p class="mt-8 font-code text-code text-on-surface-variant text-center">
@@ -77,12 +77,27 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { reactive, ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { authApi } from '@/services/api';
 
-const router = useRouter()
+const router = useRouter();
+const route = useRoute();
 const showPassword = ref(false);
+
+onMounted(() => {
+  if (route.query.social_success) {
+    localStorage.setItem('isLoggedIn', 'true');
+    showToast('Login Sosmed Berhasil!', 'success');
+    setTimeout(() => {
+        router.replace('/');
+    }, 1000);
+  }
+  if (route.query.social_error) {
+    showToast('Waduh, gagal login pakai sosmed nih.', 'error');
+    router.replace('/login');
+  }
+});
 
 const form = reactive({
   email: '',

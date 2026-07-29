@@ -7,6 +7,8 @@ Route::controller(AuthController::class)->group(function () {
     Route::middleware('guest')->group(function () {
         Route::post('/login', 'login');
         Route::post('/register', 'register');
+        Route::get('/auth/{provider}/redirect', 'redirectSocial');
+        Route::get('/auth/{provider}/callback', 'callbackSocial');
     });
 
     Route::middleware('auth')->group(function () {
