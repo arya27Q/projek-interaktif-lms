@@ -9,7 +9,7 @@
           <span class="material-symbols-outlined">notifications</span>
         </button>
         <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="focus:outline-none rounded-full">
-          <img alt="User profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMx_rL2GZkuoEJIXlW3MmTRQwk2eQdnOXt-DjyV6locEOq4BiDrvCioDR4iGOgoxaUb6tbKxlqwV8h90wAwULBwrCADGCHFAPEF_JsljzN6vjBSNUT7wDNgO0Cc8vuhRhlDVvR-WqpbbxEPjYGWiXtEGZF0PZS9aQNgTeIJfgQJeebQKMespvlJEy_3MK3NCVIzmU73tSeu3iObfsi1Lmv4oE0PVr4SoTAeKgcYR888lpkkjND5VnnYPIHPsySo9vwVDShj9mSmxSB"/>
+          <img alt="User profile" class="w-8 h-8 rounded-full object-cover" :src="currentUser?.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDMx_rL2GZkuoEJIXlW3MmTRQwk2eQdnOXt-DjyV6locEOq4BiDrvCioDR4iGOgoxaUb6tbKxlqwV8h90wAwULBwrCADGCHFAPEF_JsljzN6vjBSNUT7wDNgO0Cc8vuhRhlDVvR-WqpbbxEPjYGWiXtEGZF0PZS9aQNgTeIJfgQJeebQKMespvlJEy_3MK3NCVIzmU73tSeu3iObfsi1Lmv4oE0PVr4SoTAeKgcYR888lpkkjND5VnnYPIHPsySo9vwVDShj9mSmxSB'"/>
         </button>
 
         <!-- Dropdown Mobile Menu -->
@@ -35,7 +35,7 @@
       <div class="p-6 flex flex-col h-full">
         <!-- Brand Header -->
         <div class="mb-10">
-          <h1 class="font-display-lg text-display-lg text-primary">NexLearn</h1>
+          <h1 class="font-display-lg text-display-lg text-primary truncate" :title="currentUser?.name || 'NexLearn'">{{ currentUser?.name || 'NexLearn' }}</h1>
           <p class="font-body-md text-secondary mt-1">Level 12 • 2,450 EXP</p>
         </div>
         <!-- Main Tabs -->
@@ -137,7 +137,7 @@
           <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
         </button>
         <router-link to="/profile" class="h-10 w-10 rounded-full bg-surface-container-high overflow-hidden border border-surface-variant hover:border-primary transition-colors block">
-          <img class="w-full h-full object-cover" alt="Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMx_rL2GZkuoEJIXlW3MmTRQwk2eQdnOXt-DjyV6locEOq4BiDrvCioDR4iGOgoxaUb6tbKxlqwV8h90wAwULBwrCADGCHFAPEF_JsljzN6vjBSNUT7wDNgO0Cc8vuhRhlDVvR-WqpbbxEPjYGWiXtEGZF0PZS9aQNgTeIJfgQJeebQKMespvlJEy_3MK3NCVIzmU73tSeu3iObfsi1Lmv4oE0PVr4SoTAeKgcYR888lpkkjND5VnnYPIHPsySo9vwVDShj9mSmxSB"/>
+          <img class="w-full h-full object-cover" alt="Profile" :src="currentUser?.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDMx_rL2GZkuoEJIXlW3MmTRQwk2eQdnOXt-DjyV6locEOq4BiDrvCioDR4iGOgoxaUb6tbKxlqwV8h90wAwULBwrCADGCHFAPEF_JsljzN6vjBSNUT7wDNgO0Cc8vuhRhlDVvR-WqpbbxEPjYGWiXtEGZF0PZS9aQNgTeIJfgQJeebQKMespvlJEy_3MK3NCVIzmU73tSeu3iObfsi1Lmv4oE0PVr4SoTAeKgcYR888lpkkjND5VnnYPIHPsySo9vwVDShj9mSmxSB'"/>
         </router-link>
       </div>
     </header>
@@ -178,7 +178,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, provide } from 'vue';
 import { useRouter } from 'vue-router';
 import { authApi } from '@/services/api';
 
@@ -186,6 +186,18 @@ const router = useRouter();
 const isMobileMenuOpen = ref(false);
 const searchQuery = ref('');
 const isSearchFocused = ref(false);
+const currentUser = ref(null);
+
+onMounted(async () => {
+  try {
+    const response = await authApi.me();
+    if (response && response.user) {
+      currentUser.value = response.user;
+    }
+  } catch (error) {
+    console.error('Failed to fetch layout user data', error);
+  }
+});
 
 const handleSearchBlur = () => {
   // Delay slightly so clicks on dropdown items can register before it disappears

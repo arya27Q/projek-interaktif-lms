@@ -21,7 +21,7 @@ use App\Models\User\UserBookmark;
 use App\Models\User\VideoWatchLog;
 use App\Models\Academic\PeerReview;
 
-#[Fillable(['name', 'email', 'password', 'provider', 'provider_id'])]
+#[Fillable(['name', 'email', 'password', 'provider', 'provider_id', 'bio', 'avatar'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

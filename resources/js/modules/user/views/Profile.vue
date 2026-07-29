@@ -4,14 +4,20 @@
     <header class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
       <div class="flex items-center gap-6">
         <div class="relative">
-          <img alt="Alex Johnson" class="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover shadow-[0px_20px_40px_rgba(0,0,0,0.08)] border-4 border-surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARvtnGkjYWdlvqWvjWweBnY5qWJEu4rr1rOhpojtH3Uml4tCUTlpw7Hw0XMGFXYZ2IYO0I2gqSTGGLEmSv27D6RB4rh0Fg7exqkZ9xNjVIHJg1GIAGy1qwV_bWgQYdW1TsdydXHDxScxYbkWDnTgtQXMan7_VJ1r4L7j39wV09jhh8tjaK3aDVYBcMkqysyPHax4h9olbX-M8HNUc8RAjH2UQYIUZRjVVrNCKCB7LChF3l985UyXlZLBqxMbQH12aSiLARdFpl4E9y"/>
+          <img :alt="user.name" class="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover shadow-[0px_20px_40px_rgba(0,0,0,0.08)] border-4 border-surface" :src="user.avatar || 'https://lh3.googleusercontent.com/aida-public/AB6AXuARvtnGkjYWdlvqWvjWweBnY5qWJEu4rr1rOhpojtH3Uml4tCUTlpw7Hw0XMGFXYZ2IYO0I2gqSTGGLEmSv27D6RB4rh0Fg7exqkZ9xNjVIHJg1GIAGy1qwV_bWgQYdW1TsdydXHDxScxYbkWDnTgtQXMan7_VJ1r4L7j39wV09jhh8tjaK3aDVYBcMkqysyPHax4h9olbX-M8HNUc8RAjH2UQYIUZRjVVrNCKCB7LChF3l985UyXlZLBqxMbQH12aSiLARdFpl4E9y'"/>
           <router-link to="/profile/edit" class="absolute bottom-0 right-0 p-2 bg-surface rounded-full shadow-md hover:bg-surface-container transition-colors flex items-center justify-center">
             <span class="material-symbols-outlined text-primary text-sm">edit</span>
           </router-link>
         </div>
         <div>
-          <h1 class="font-display-lg-mobile text-display-lg-mobile lg:font-display-lg lg:text-display-lg text-on-surface mb-2">Alex Johnson</h1>
-          <p class="text-on-surface-variant font-body-lg text-body-lg">Mahasiswa Ilmu Komputer • Angkatan 2024</p>
+          <h1 class="font-display-lg-mobile text-display-lg-mobile lg:font-display-lg lg:text-display-lg text-on-surface mb-2">
+            <span v-if="isLoading" class="animate-pulse bg-surface-container-high h-8 w-48 block rounded"></span>
+            <span v-else>{{ user.name }}</span>
+          </h1>
+          <p class="text-on-surface-variant font-body-lg text-body-lg">
+            <span v-if="isLoading" class="animate-pulse bg-surface-container-high h-5 w-32 block rounded"></span>
+            <span v-else>Pengguna LMS</span>
+          </p>
         </div>
       </div>
       <router-link to="/profile/edit" class="px-6 py-3 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm hover:-translate-y-0.5 hover:shadow-[0px_10px_30px_rgba(0,88,190,0.3)] transition-all duration-200">
@@ -27,11 +33,17 @@
         <div class="space-y-4">
           <div>
             <label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Email</label>
-            <p class="font-body-md text-body-md text-on-surface">alex.johnson@student.edu</p>
+            <p class="font-body-md text-body-md text-on-surface">
+              <span v-if="isLoading" class="animate-pulse bg-surface-container-high h-5 w-48 block rounded"></span>
+              <span v-else>{{ user.email }}</span>
+            </p>
           </div>
           <div>
             <label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Bio</label>
-            <p class="font-body-md text-body-md text-on-surface">Sangat tertarik dengan AI dan Machine Learning. Sedang membangun proyek akhir yang keren!</p>
+            <p class="font-body-md text-body-md text-on-surface">
+              <span v-if="isLoading" class="animate-pulse bg-surface-container-high h-10 w-full block rounded"></span>
+              <span v-else>{{ user.bio || 'Belum ada bio. Ayo ceritakan sedikit tentang dirimu!' }}</span>
+            </p>
           </div>
           <div class="pt-4">
             <label class="font-label-sm text-label-sm text-on-surface-variant block mb-3">Tautan Sosial</label>
@@ -168,4 +180,22 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import { authApi } from '@/services/api';
+
+const user = ref({});
+const isLoading = ref(true);
+
+onMounted(async () => {
+  try {
+    const response = await authApi.me();
+    if (response && response.user) {
+      user.value = response.user;
+    }
+  } catch (error) {
+    console.error("Gagal mengambil data user:", error);
+  } finally {
+    isLoading.value = false;
+  }
+});
 </script>

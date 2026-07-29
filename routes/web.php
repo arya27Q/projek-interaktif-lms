@@ -13,6 +13,13 @@ Route::controller(AuthController::class)->group(function () {
 
     Route::middleware('auth')->group(function () {
         Route::post('/logout', 'logout');
+        Route::get('/auth/me', function (Illuminate\Http\Request $request) {
+            return response()->json([
+                'success' => true,
+                'user' => $request->user()
+            ]);
+        });
+        Route::put('/user/profile', [App\Http\Controllers\UserController::class, 'updateProfile']);
     });
 });
 
