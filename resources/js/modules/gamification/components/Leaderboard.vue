@@ -71,22 +71,31 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { gamificationApi } from '@/services/api';
 
 const activeFilter = ref('global');
+const isLoading = ref(true);
 
 const filters = [
   { id: 'global', label: 'Global' },
   { id: 'course', label: 'Per Kursus' }
 ];
 
-const leaderboardData = [
-  { id: 1, name: 'Sarah Jenkins', badge: 'Grand Master', exp: 4820, avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80', trend: 120 },
-  { id: 2, name: 'Alex (Kamu)', badge: 'Scholar', exp: 2450, avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8Aen3XuPxpgFCE5J2b6J7tZDlR1fjk-vWMzgbTfEFSnrx7WWGTHBI_MHu3bQHGuPgOlZgQgywrR0BjVhH2ukmK-TBy99kxqpMje9NopjNmczZbDI8xJfpGz2ZH7-PNt99FY8B3AgwcEY9QCcHK8iG9LpXfX4skqz3bAzvchrK-JWEu3E0KIr4q0R_z-eGEuXCv4vRcWRDZciFZbvySn54YgA8wxr_6UGpTqnFoa4imW5tWfKfDvwO3HPxIOLX6N1R7yndm_VxvvsO', trend: 45, isCurrentUser: true },
-  { id: 3, name: 'Michael Chen', badge: 'Scholar', exp: 2100, avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&q=80', trend: 30 },
-  { id: 4, name: 'Priya Sharma', badge: 'Apprentice', exp: 1875, avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80', trend: 0 },
-  { id: 5, name: 'James Wilson', badge: 'Apprentice', exp: 1540, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80', trend: 15 },
-];
+const leaderboardData = ref([]);
 
-const filteredList = computed(() => leaderboardData);
+onMounted(async () => {
+  try {
+    const response = await gamificationApi.getLeaderboard(activeFilter.value);
+    if (response && response.data) {
+      leaderboardData.value = response.data;
+    }
+  } catch (error) {
+    console.error('Gagal mengambil data leaderboard:', error);
+  } finally {
+    isLoading.value = false;
+  }
+});
+
+const filteredList = computed(() => leaderboardData.value);
 </script>

@@ -47,19 +47,9 @@
           <div class="w-12 h-12 rounded-2xl bg-tertiary-fixed flex items-center justify-center">
             <span class="material-symbols-outlined text-on-tertiary-fixed text-2xl" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
           </div>
-          <span class="text-tertiary font-bold">+2 hari ini</span>
+          <span class="text-tertiary font-bold">Aktivitas</span>
         </div>
-        <p class="font-label-sm text-secondary mb-1">Streak Saat Ini</p>
-        <h3 class="font-display-lg text-on-surface text-[28px] md:text-[32px]">12 Hari</h3>
-        <div class="mt-6 flex gap-2">
-          <div class="flex-1 h-1.5 bg-tertiary rounded-full"></div>
-          <div class="flex-1 h-1.5 bg-tertiary rounded-full"></div>
-          <div class="flex-1 h-1.5 bg-tertiary rounded-full"></div>
-          <div class="flex-1 h-1.5 bg-tertiary rounded-full"></div>
-          <div class="flex-1 h-1.5 bg-surface-container-high rounded-full"></div>
-          <div class="flex-1 h-1.5 bg-surface-container-high rounded-full"></div>
-          <div class="flex-1 h-1.5 bg-surface-container-high rounded-full"></div>
-        </div>
+        <StreakWidget />
       </div>
 
       <!-- EXP Widget -->
@@ -99,42 +89,10 @@
       <!-- Leaderboard Preview -->
       <div class="col-span-12 bg-surface-container-lowest p-6 md:p-8 rounded-2xl shadow-[0px_10px_30px_rgba(0,0,0,0.04)] border border-surface-container-low hover-lift">
         <div class="flex items-center justify-between mb-6">
-          <h3 class="font-headline-md text-on-surface text-[18px]">Pratinjau Papan Peringkat</h3>
+          <h3 class="font-headline-md text-on-surface text-[18px]">Papan Peringkat</h3>
           <a href="#" class="text-primary font-label-sm hover:underline">Lihat Semua</a>
         </div>
-        <div class="space-y-4">
-          <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl">
-            <div class="flex items-center gap-3">
-              <span class="font-bold text-primary w-4 text-center">1</span>
-              <div class="w-8 h-8 rounded-full overflow-hidden border border-surface-container-low">
-                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80" alt="Sarah" class="w-full h-full object-cover"/>
-              </div>
-              <span class="font-label-sm">Sarah Jenkins</span>
-            </div>
-            <span class="font-bold text-on-surface text-sm">4,820 EXP</span>
-          </div>
-          <div class="flex items-center justify-between p-3 bg-primary/5 border border-primary/10 rounded-xl relative overflow-hidden">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
-            <div class="flex items-center gap-3">
-              <span class="font-bold text-primary w-4 text-center">2</span>
-              <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-primary">
-                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8Aen3XuPxpgFCE5J2b6J7tZDlR1fjk-vWMzgbTfEFSnrx7WWGTHBI_MHu3bQHGuPgOlZgQgywrR0BjVhH2ukmK-TBy99kxqpMje9NopjNmczZbDI8xJfpGz2ZH7-PNt99FY8B3AgwcEY9QCcHK8iG9LpXfX4skqz3bAzvchrK-JWEu3E0KIr4q0R_z-eGEuXCv4vRcWRDZciFZbvySn54YgA8wxr_6UGpTqnFoa4imW5tWfKfDvwO3HPxIOLX6N1R7yndm_VxvvsO" alt="You" class="w-full h-full object-cover"/>
-              </div>
-              <span class="font-label-sm font-bold text-primary">Alex (You)</span>
-            </div>
-            <span class="font-bold text-primary text-sm">2,450 EXP</span>
-          </div>
-          <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl">
-            <div class="flex items-center gap-3">
-              <span class="font-bold text-secondary w-4 text-center">3</span>
-              <div class="w-8 h-8 rounded-full overflow-hidden border border-surface-container-low">
-                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&q=80" alt="Michael" class="w-full h-full object-cover"/>
-              </div>
-              <span class="font-label-sm">Michael Chen</span>
-            </div>
-            <span class="font-bold text-on-surface text-sm">2,100 EXP</span>
-          </div>
-        </div>
+        <Leaderboard />
       </div>
     </section>
 
@@ -220,6 +178,9 @@
 </template>
 
 <script setup>
+import StreakWidget from '@/modules/gamification/components/StreakWidget.vue';
+import Leaderboard from '@/modules/gamification/components/Leaderboard.vue';
+
 // Dashboard logic can be added here
 </script>
 

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
+import axios from 'axios';
 
 export const useCoursePlayerStore = defineStore('coursePlayer', () => {
   // ── State ──────────────────────────────────────────────────────────
@@ -17,49 +18,13 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
   const activeTab = ref('content');
 
   // Daftar modul & pelajaran
-  const modules = ref([
-    {
-      id: 0,
-      title: 'Modul 0: Dasar-dasar Sistem',
-      isBypassed: true,
-      lessons: [
-        { id: 101, title: 'Sejarah Desain UI', duration: '15:00', completed: true, locked: false }
-      ]
-    },
-    {
-      id: 1,
-      title: 'Modul 4: Kerangka Global',
-      lessons: [
-        { id: 1, title: 'Pengenalan Shell Logic', duration: '12:40', completed: true, locked: false },
-        { id: 2, title: 'Sistem Interaksi Lanjutan', duration: '24:15', completed: false, locked: false, isActive: true },
-        { id: 3, title: 'Mandat Shell Semantik', duration: '18:50', completed: false, locked: true },
-      ]
-    },
-    {
-      id: 2,
-      title: 'Modul 5: Poles & Fidelitas',
-      lessons: [
-        { id: 4, title: 'Teori Micro-interaksi', duration: '32:10', completed: false, locked: true },
-        { id: 5, title: 'Animasi & Desain Gerak', duration: '28:05', completed: false, locked: true },
-      ]
-    },
-    {
-      id: 3,
-      title: 'Modul 5.1: Remedial Transisi',
-      isRemedial: true,
-      lessons: [
-        { id: 6, title: 'Dasar Animasi Transisi (Review)', duration: '10:05', completed: false, locked: false }
-      ]
-    }
-  ]);
+  const modules = ref([]);
+  const currentCourse = ref(null);
 
-  const currentLessonId = ref(2);
+  const currentLessonId = ref(null);
 
   // Catatan (timestamped notes)
-  const notes = ref([
-    { id: 1, timestamp: 195, text: 'Pastikan z-index sidebar floating selalu lebih tinggi dari modal overlay untuk menjaga hierarki "Island".', createdAt: '2 jam lalu' },
-    { id: 2, timestamp: 340, text: 'Aturan definisi shadow: Level 1 untuk shell persisten, Level 2 untuk objek floating sementara.', createdAt: 'Kemarin' }
-  ]);
+  const notes = ref([]);
 
   // Diskusi
   const discussions = ref([
@@ -126,31 +91,71 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
     play();
   };
 
-  const addNote = (text) => {
-    notes.value.unshift({
-      id: Date.now(),
-      timestamp: currentTime.value,
-      text,
-      createdAt: 'Baru saja'
-    });
+  const fetchCourseData = async (courseId) => {
+    try {
+      const response = await axios.get(`/player/course/${courseId}`);
+      currentCourse.value = response.data.data;
+      modules.value = currentCourse.value.modules;
+      
+      // Select first lesson by default if none selected
+      if (!currentLessonId.value && modules.value.length > 0 && modules.value[0].lessons.length > 0) {
+        selectLesson(modules.value[0].lessons[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching course data', error);
+    }
+  };
+
+  const fetchNotes = async (lessonId) => {
+    try {
+      const response = await axios.get(`/player/lesson/${lessonId}/notes`);
+      notes.value = response.data.map(n => ({
+        id: n.id,
+        timestamp: n.video_timestamp,
+        text: n.text,
+        createdAt: new Date(n.created_at).toLocaleDateString()
+      }));
+    } catch (error) {
+      console.error('Error fetching notes', error);
+    }
+  };
+
+  const addNote = async (text) => {
+    if (!currentLessonId.value) return;
+    try {
+      const response = await axios.post(`/player/lesson/${currentLessonId.value}/notes`, {
+        text,
+        video_timestamp: Math.floor(currentTime.value)
+      });
+      notes.value.unshift({
+        id: response.data.data.id,
+        timestamp: response.data.data.video_timestamp,
+        text: response.data.data.text,
+        createdAt: 'Baru saja'
+      });
+    } catch (error) {
+      console.error('Error saving note', error);
+    }
   };
 
   const selectLesson = (lessonId) => {
     currentLessonId.value = lessonId;
     isPlaying.value = false;
     currentTime.value = 0;
+    fetchNotes(lessonId);
   };
 
   return {
     isPlaying, currentTime, duration, isMuted, volume,
     showQuiz, currentQuiz,
     activeTab,
-    modules, currentLessonId, currentLesson,
+    modules, currentLessonId, currentLesson, currentCourse,
     notes, discussions,
     totalLessons, completedLessons, progressPercent,
     formatTime,
     togglePlay, pause, play,
     triggerQuiz, dismissQuiz,
+    fetchCourseData, fetchNotes,
     addNote, selectLesson
   };
 });

@@ -45,12 +45,27 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { gamificationApi } from '@/services/api';
 
 const props = defineProps({
-  currentStreak: { type: Number, default: 12 },
   longestStreak: { type: Number, default: 21 },
   monthlyDays: { type: Number, default: 18 }
+});
+
+const currentStreak = ref(0);
+const isActiveToday = ref(false);
+
+onMounted(async () => {
+  try {
+    const res = await gamificationApi.getStreak();
+    if (res && res.data) {
+      currentStreak.value = res.data.current_streak;
+      isActiveToday.value = res.data.is_active_today;
+    }
+  } catch (error) {
+    console.error('Gagal memuat streak', error);
+  }
 });
 
 const weekDays = computed(() => {
@@ -62,7 +77,7 @@ const weekDays = computed(() => {
     label: d,
     dayName: d,
     isToday: i === adjustedToday,
-    completed: i < adjustedToday, // Days before today are completed
+    completed: i < adjustedToday || (i === adjustedToday && isActiveToday.value),
   }));
 });
 </script>

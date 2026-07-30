@@ -27,6 +27,19 @@ class Course extends Model
     
     public function modules()
     {
-        return $this->hasMany(Module::class);
+        return $this->hasMany(Module::class)->orderBy('order_index');
+    }
+
+    public function lessons()
+    {
+        return $this->hasManyThrough(Lesson::class, Module::class);
+    }
+
+    public function scopeCategory($query, $category)
+    {
+        if ($category && $category !== 'Semua Kategori') {
+            return $query->where('category', $category);
+        }
+        return $query;
     }
 }

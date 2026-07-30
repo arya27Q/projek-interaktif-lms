@@ -264,12 +264,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { useCoursePlayerStore } from '../../course-player/store/coursePlayerStore.js';
 import VideoPlayer from '../../../modules/course-player/components/VideoPlayer.vue';
 import PopupQuiz from '../../../modules/course-player/components/PopupQuiz.vue';
 
 const store = useCoursePlayerStore();
+const route = useRoute();
+
+onMounted(() => {
+  const courseId = route.params.id;
+  if (courseId) {
+    store.fetchCourseData(courseId);
+  }
+});
 
 // UI States
 const isWritingNote = ref(false);

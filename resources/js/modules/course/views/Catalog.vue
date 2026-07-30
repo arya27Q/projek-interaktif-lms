@@ -102,9 +102,9 @@
             
             <div v-if="course.instructor" class="mt-auto flex items-center gap-3 mb-4">
               <div v-if="course.isFeatured" class="h-8 w-8 rounded-full bg-surface-container-high overflow-hidden border border-surface-variant grayscale shrink-0">
-                <img class="w-full h-full object-cover" :alt="course.instructor" :src="course.instructorAvatar"/>
+                <img class="w-full h-full object-cover" :alt="course.instructor.name || course.instructor" :src="course.instructorAvatar"/>
               </div>
-              <span class="font-body-md text-secondary">{{ course.instructor }}</span>
+              <span class="font-body-md text-secondary">{{ course.instructor.name || course.instructor }}</span>
             </div>
           </div>
           <div v-if="course.price || course.exp" class="mt-auto pt-4 border-t border-surface-container-low flex flex-wrap items-center justify-between gap-y-3 gap-x-2">
@@ -136,9 +136,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-
-import { categories, csSubcategories, generateCourses } from '../../../data/mockCourses.js';
+import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
+import { categories, csSubcategories } from '../../../data/mockCourses.js';
 
 const selectedCategory = ref('Semua Kategori');
 const selectedSubcategory = ref('Semua');
@@ -157,9 +157,25 @@ const selectSubcategory = (sub) => {
 };
 
 // State
-const allCourses = ref(generateCourses(245));
+const allCourses = ref([]);
 const visibleCount = ref(6);
-const isLoading = ref(false);
+const isLoading = ref(true);
+
+const fetchCourses = async () => {
+  isLoading.value = true;
+  try {
+    const response = await axios.get('/courses');
+    allCourses.value = response.data.data;
+  } catch (error) {
+    console.error('Error fetching courses:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchCourses();
+});
 
 const filteredCourses = computed(() => {
   return allCourses.value.filter(course => {
