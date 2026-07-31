@@ -6,9 +6,11 @@ use App\Http\Controllers\gamification\GamificationController;
 use App\Http\Controllers\profile\UserController;
 use App\Http\Controllers\Course\CourseController;
 use App\Http\Controllers\Course\CoursePlayerController;
+use App\Http\Controllers\Course\InstructorController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::middleware('guest')->group(function () {
+        Route::get('/login', function () { return view('welcome'); })->name('login');
         Route::post('/login', 'login');
         Route::post('/register', 'register');
         Route::get('/auth/{provider}/redirect', 'redirectSocial');
@@ -37,6 +39,17 @@ Route::controller(AuthController::class)->group(function () {
         Route::get('/player/course/{id}', [CoursePlayerController::class, 'getContent']);
         Route::get('/player/lesson/{id}/notes', [CoursePlayerController::class, 'getNotes']);
         Route::post('/player/lesson/{id}/notes', [CoursePlayerController::class, 'saveNote']);
+
+        // Rute Instructor Studio
+        Route::middleware(['role:instructor,admin'])->prefix('instructor')->group(function () {
+            Route::get('/courses', [InstructorController::class, 'getCourses']);
+            Route::post('/courses', [InstructorController::class, 'storeCourse']);
+            Route::get('/courses/{id}', [InstructorController::class, 'getCourseDetails']);
+            Route::post('/courses/{id}', [InstructorController::class, 'updateCourse']);
+            Route::post('/courses/{id}/publish', [InstructorController::class, 'publishCourse']);
+            Route::post('/courses/{id}/modules', [InstructorController::class, 'storeModule']);
+            Route::post('/modules/{id}/lessons', [InstructorController::class, 'storeLesson']);
+        });
     });
 });
 

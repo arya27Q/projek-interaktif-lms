@@ -11,10 +11,10 @@
           <span class="material-symbols-outlined">calendar_today</span>
           30 Hari Terakhir
         </button>
-        <button class="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-lg font-label-sm hover:bg-on-surface transition-all active:scale-95 shadow-md">
+        <router-link to="/instructor/course/new/edit" class="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-lg font-label-sm hover:bg-on-surface transition-all active:scale-95 shadow-md">
           <span class="material-symbols-outlined">add</span>
           Buat Kursus
-        </button>
+        </router-link>
       </div>
     </div>
 
@@ -178,112 +178,49 @@
             </tr>
           </thead>
           <tbody class="font-body-md text-on-surface">
-            <!-- Baris 1 -->
-            <tr class="border-b border-surface-container-low hover:bg-surface-container-lowest transition-colors group">
+            <!-- Dynamic Rows -->
+            <tr v-for="course in courses" :key="course.id" class="border-b border-surface-container-low hover:bg-surface-container-lowest transition-colors group">
               <td class="py-6">
                 <div class="flex items-center gap-4">
                   <div class="w-12 h-12 rounded-lg bg-surface-container-high overflow-hidden shadow-sm shrink-0">
-                    <img class="w-full h-full object-cover" alt="Thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNw6y_b42BKlLznFq3wzcwpdTHO8Ce2qWOnDSloPwOLiFDchp9jwajob_A5Qehu79daCxWBoXjbS1WnnVrdFRLNA-A9fTy4y6wFtOcjoybxtpG4gfuuteRWdEu_xqm0pgvxX4uNSY8-Ne9KHrE7YGlMoa9nD2T5NDi1AA5rnrTcSFnsg17GSwh0w9BUQECHoQ5oywHoN2bmw8Vxusz1fiysN6sbjmLQ7NE2wbnK07SMs8fzuzK4-eib53OIlpnYMwqzFFEDyYC3Kf1"/>
+                    <img class="w-full h-full object-cover" alt="Thumbnail" :src="course.thumbnail_url"/>
                   </div>
                   <div>
-                    <p class="font-bold">Menguasai CSS Layout Lanjutan</p>
-                    <p class="text-xs text-secondary">Diperbarui 2 hari lalu</p>
+                    <p class="font-bold">{{ course.title }}</p>
+                    <p class="text-xs text-secondary">Diperbarui {{ new Date(course.updated_at).toLocaleDateString() }}</p>
                   </div>
                 </div>
               </td>
               <td class="py-6 px-4">
-                <span class="px-3 py-1 bg-primary-fixed text-primary text-[10px] font-bold rounded-full uppercase tracking-tighter whitespace-nowrap">Aktif</span>
+                <span :class="course.status === 'published' ? 'bg-primary-fixed text-primary' : 'bg-surface-container-high text-secondary'" class="px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-tighter whitespace-nowrap">
+                  {{ course.status }}
+                </span>
               </td>
-              <td class="py-6 px-4 font-bold">8.421</td>
-              <td class="py-6 px-4 whitespace-nowrap">Rp 199.200.000</td>
+              <td class="py-6 px-4 font-bold">{{ course.modules_count }} Modul</td>
+              <td class="py-6 px-4 whitespace-nowrap">Rp {{ course.price.toLocaleString('id-ID') }}</td>
               <td class="py-6">
                 <div class="flex items-center gap-1 text-tertiary">
                   <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                  <span class="font-bold">4.9</span>
+                  <span class="font-bold">{{ course.average_rating || 'N/A' }}</span>
                 </div>
               </td>
               <td class="py-6 text-right">
                 <div class="flex items-center justify-end gap-2 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button class="p-2 hover:bg-surface-container-low rounded-lg text-primary" title="Edit Kursus">
+                  <router-link :to="`/instructor/course/${course.id}/edit`" class="p-2 hover:bg-surface-container-low rounded-lg text-primary" title="Edit Kursus">
                     <span class="material-symbols-outlined">edit</span>
-                  </button>
-                  <button class="p-2 hover:bg-surface-container-low rounded-lg text-secondary" title="Lihat Halaman Publik">
+                  </router-link>
+                  <router-link :to="`/course/${course.id}`" class="p-2 hover:bg-surface-container-low rounded-lg text-secondary" title="Lihat Halaman Publik">
                     <span class="material-symbols-outlined">visibility</span>
-                  </button>
+                  </router-link>
                 </div>
               </td>
             </tr>
-
-            <!-- Baris 2 -->
-            <tr class="border-b border-surface-container-low hover:bg-surface-container-lowest transition-colors group">
-              <td class="py-6">
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-lg bg-surface-container-high overflow-hidden shadow-sm shrink-0">
-                    <img class="w-full h-full object-cover" alt="Thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdo2yOw4-RgGMQEeJtORjrO_1jB0Oug2LuGXG5OrIi-yGYKSnpbwCKdhZghmGdFpKwF--0wGYmRfm2ISMt4PZ-SRqRcRB3cvqELM6-Bimvxf0S0cMkTpd-49hmqI-pOxXoNw4cyBEx7PUL0FI_WUWpWtfgewfFHc3y7M21_OwKlq8j6UiI0ANqLXnBfwtEis2zkKHwCZ01PUMFQaRMhpj2Xhz8GfRacfGJvM_F3mHevob5suW7PbjAzqCHTxtjzldpLGbZKdD5CCYX"/>
-                  </div>
-                  <div>
-                    <p class="font-bold">JavaScript: Panduan Optimasi Performa</p>
-                    <p class="text-xs text-secondary">Diperbarui 1 minggu lalu</p>
-                  </div>
-                </div>
-              </td>
-              <td class="py-6 px-4">
-                <span class="px-3 py-1 bg-primary-fixed text-primary text-[10px] font-bold rounded-full uppercase tracking-tighter whitespace-nowrap">Aktif</span>
-              </td>
-              <td class="py-6 px-4 font-bold">5.862</td>
-              <td class="py-6 px-4 whitespace-nowrap">Rp 145.020.000</td>
-              <td class="py-6 px-4">
-                <div class="flex items-center gap-1 text-tertiary">
-                  <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                  <span class="font-bold">4.8</span>
-                </div>
-              </td>
-              <td class="py-6 text-right">
-                <div class="flex items-center justify-end gap-2 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button class="p-2 hover:bg-surface-container-low rounded-lg text-primary">
-                    <span class="material-symbols-outlined">edit</span>
-                  </button>
-                  <button class="p-2 hover:bg-surface-container-low rounded-lg text-secondary">
-                    <span class="material-symbols-outlined">visibility</span>
-                  </button>
-                </div>
-              </td>
+            
+            <tr v-if="isLoading">
+              <td colspan="6" class="py-10 text-center text-secondary">Memuat data...</td>
             </tr>
-
-            <!-- Baris 3 -->
-            <tr class="border-b border-surface-container-low hover:bg-surface-container-lowest transition-colors group">
-              <td class="py-6">
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-lg bg-surface-container-high overflow-hidden shadow-sm shrink-0">
-                    <img class="w-full h-full object-cover" alt="Thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcl9wqJTXB_JycnrHqcFi5ohXvmYqWEB37MC2tENWlcSQaLnNsNekKDHo05Q2ht-I1WSqONP80qcxj36ht-YwvNyehsOsonfjAgD2231Fmz1jBD2DluFBNifSTISMaS9wrNYFs4-3pUqntL2HOBuMfQARPVbYCMq4xaLc5mJfR9nJDDhyBTQ6t3APB-SEewWBEQ0ySOKBHaaDmKtVZJWvrHZyfAKZWWJyhUk1kbBWlc2Do1GaFRWBmg3WH9gpvEnGsd25kqjMQU1ey"/>
-                  </div>
-                  <div>
-                    <p class="font-bold">Produktivitas untuk Kreator Digital</p>
-                    <p class="text-xs text-secondary">Draf</p>
-                  </div>
-                </div>
-              </td>
-              <td class="py-6 px-4">
-                <span class="px-3 py-1 bg-surface-container-high text-secondary text-[10px] font-bold rounded-full uppercase tracking-tighter whitespace-nowrap">Draf</span>
-              </td>
-              <td class="py-6 px-4 font-bold">-</td>
-              <td class="py-6 px-4 whitespace-nowrap">-</td>
-              <td class="py-6 px-4">
-                <div class="flex items-center gap-1 text-secondary">
-                  <span class="material-symbols-outlined text-[16px]">star</span>
-                  <span class="font-bold">N/A</span>
-                </div>
-              </td>
-              <td class="py-6 text-right">
-                <div class="flex items-center justify-end gap-2 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button class="p-2 hover:bg-surface-container-low rounded-lg text-primary">
-                    <span class="material-symbols-outlined">edit</span>
-                  </button>
-                  <button class="p-2 hover:bg-surface-container-low rounded-lg text-secondary">
-                    <span class="material-symbols-outlined">visibility</span>
-                  </button>
-                </div>
-              </td>
+            <tr v-if="!isLoading && courses.length === 0">
+              <td colspan="6" class="py-10 text-center text-secondary">Belum ada kursus. Silakan buat kursus baru!</td>
             </tr>
           </tbody>
         </table>
@@ -293,7 +230,29 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 
+const courses = ref([]);
+const isLoading = ref(true);
+
+const fetchInstructorCourses = async () => {
+  try {
+    const res = await fetch('/instructor/courses');
+    if (!res.ok) {
+      throw new Error('Unauthorized');
+    }
+    const data = await res.json();
+    courses.value = data;
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchInstructorCourses();
+});
 </script>
 
 <style scoped>

@@ -23,6 +23,7 @@ const Certificate = () => import('../modules/user/views/Certificate.vue');
 
 const Catalog = () => import('../modules/course/views/Catalog.vue');
 const InstructorStudio = () => import('../modules/course/views/InstructorStudio.vue');
+const CourseEditor = () => import('../modules/course/views/CourseEditor.vue');
 const CoursePlayer = () => import('../modules/course/views/CoursePlayer.vue');
 const PeerReview = () => import('../modules/course/views/PeerReview.vue');
 const Checkout = () => import('../modules/course/views/Checkout.vue');
@@ -62,6 +63,11 @@ const routes = [
                 path: 'instructor',
                 name: 'InstructorStudio',
                 component: InstructorStudio
+            },
+            {
+                path: 'instructor/course/:id/edit',
+                name: 'CourseEditor',
+                component: CourseEditor
             },
             {
                 path: 'course/:id',

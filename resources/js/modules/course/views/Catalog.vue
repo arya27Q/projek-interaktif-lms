@@ -81,11 +81,11 @@
           :class="{ 'md:col-span-2': course.isFeatured }"
         >
           <div class="relative w-full rounded-lg overflow-hidden mb-5 bg-surface-container-high" :class="course.isFeatured ? 'h-64' : 'h-48'">
-            <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" :class="!course.isFeatured && course.level === 'Intermediate' ? 'mix-blend-multiply' : ''" :alt="course.title" :src="course.thumbnail"/>
+            <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" :class="!course.isFeatured && course.level === 'Intermediate' ? 'mix-blend-multiply' : ''" :alt="course.title" :src="course.thumbnail_url || 'https://via.placeholder.com/600x400.png?text=Course'"/>
             <div v-if="course.isFeatured" class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
             <div v-if="course.isFeatured" class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 rounded-full font-label-sm text-xs font-bold uppercase tracking-wider">Pilihan</div>
             <div :class="course.isFeatured ? 'absolute bottom-4 right-4 text-white font-label-sm' : 'absolute top-3 right-3 px-3 py-1 bg-white/90 backdrop-blur-sm text-primary font-label-sm rounded-full'">
-              {{ course.rating }} ★
+              4.8 ★
             </div>
           </div>
           <div class="flex-1 flex flex-col">
@@ -102,17 +102,17 @@
             
             <div v-if="course.instructor" class="mt-auto flex items-center gap-3 mb-4">
               <div v-if="course.isFeatured" class="h-8 w-8 rounded-full bg-surface-container-high overflow-hidden border border-surface-variant grayscale shrink-0">
-                <img class="w-full h-full object-cover" :alt="course.instructor.name || course.instructor" :src="course.instructorAvatar"/>
+                <img class="w-full h-full object-cover" :alt="course.instructor.name" :src="course.instructor.avatar || 'https://ui-avatars.com/api/?name=' + course.instructor.name"/>
               </div>
-              <span class="font-body-md text-secondary">{{ course.instructor.name || course.instructor }}</span>
+              <span class="font-body-md text-secondary">{{ course.instructor.name }}</span>
             </div>
           </div>
-          <div v-if="course.price || course.exp" class="mt-auto pt-4 border-t border-surface-container-low flex flex-wrap items-center justify-between gap-y-3 gap-x-2">
+          <div v-if="course.price !== undefined || course.exp" class="mt-auto pt-4 border-t border-surface-container-low flex flex-wrap items-center justify-between gap-y-3 gap-x-2">
             <div v-if="course.exp" class="flex items-center gap-1 text-primary whitespace-nowrap">
               <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">stars</span>
               <span class="font-label-sm font-bold">{{ course.exp }} EXP</span>
             </div>
-            <span v-if="course.price" class="font-headline-md text-on-surface whitespace-nowrap shrink-0 ml-auto">{{ course.price }}</span>
+            <span v-if="course.price !== undefined" class="font-headline-md text-on-surface whitespace-nowrap shrink-0 ml-auto">{{ course.price == 0 ? 'Gratis' : 'Rp ' + course.price.toLocaleString('id-ID') }}</span>
           </div>
         </router-link>
       </template>
