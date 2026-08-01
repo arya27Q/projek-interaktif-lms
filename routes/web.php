@@ -7,6 +7,7 @@ use App\Http\Controllers\profile\UserController;
 use App\Http\Controllers\Course\CourseController;
 use App\Http\Controllers\Course\CoursePlayerController;
 use App\Http\Controllers\Course\InstructorController;
+use App\Http\Controllers\Course\CheckoutController;
 
 Route::controller(AuthController::class)->group(function () {
     Route::middleware('guest')->group(function () {
@@ -39,6 +40,10 @@ Route::controller(AuthController::class)->group(function () {
         Route::get('/player/course/{id}', [CoursePlayerController::class, 'getContent']);
         Route::get('/player/lesson/{id}/notes', [CoursePlayerController::class, 'getNotes']);
         Route::post('/player/lesson/{id}/notes', [CoursePlayerController::class, 'saveNote']);
+
+        // Rute Checkout
+        Route::post('/checkout/{id}/process', [CheckoutController::class, 'process']);
+        Route::post('/checkout/{orderId}/verify', [CheckoutController::class, 'verify']);
 
         // Rute Instructor Studio
         Route::middleware(['role:instructor,admin'])->prefix('instructor')->group(function () {

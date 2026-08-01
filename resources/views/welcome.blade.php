@@ -13,6 +13,9 @@
 
         <!-- CSRF Token untuk keamanan Vue SPA -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        
+        <!-- Midtrans Client Key -->
+        <meta name="midtrans-client-key" content="{{ config('services.midtrans.client_key') }}">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>

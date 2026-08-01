@@ -7,7 +7,11 @@
         <p class="text-secondary font-body-md">Selesaikan pembayaran untuk mulai belajar.</p>
       </div>
 
-      <div class="flex flex-col md:flex-row gap-8">
+      <div v-if="isLoading" class="flex justify-center py-20">
+        <span class="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>
+      </div>
+
+      <div v-else-if="course" class="flex flex-col md:flex-row gap-8">
       <!-- Left Column: Course Info & Form -->
       <div class="flex-1 min-w-0 space-y-6">
         
@@ -15,8 +19,8 @@
         <div class="glass-card p-6 rounded-2xl border border-surface-container-low flex flex-col sm:flex-row gap-6">
           <div class="w-full sm:w-48 h-32 rounded-xl overflow-hidden shrink-0 bg-surface-container relative group">
             <img 
-              src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop" 
-              alt="Course Thumbnail"
+              :src="course.thumbnail_url || 'https://via.placeholder.com/600x400.png?text=Course'" 
+              :alt="course.title"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
@@ -24,17 +28,17 @@
           <div class="flex flex-col justify-center min-w-0">
             <div class="flex flex-wrap items-center gap-2 mb-2">
               <span class="px-2.5 py-1 rounded-md bg-primary/10 text-primary font-label-sm font-semibold tracking-wide uppercase whitespace-nowrap">
-                Web Development
+                {{ course.category }}
               </span>
               <span class="flex items-center text-secondary text-sm whitespace-nowrap">
                 <span class="material-symbols-outlined text-sm mr-1">signal_cellular_alt</span>
-                Intermediate
+                {{ course.level }}
               </span>
             </div>
-            <h2 class="text-xl font-bold text-on-surface mb-2 line-clamp-2">Mastering Vue 3 & Composition API for Enterprise Apps</h2>
+            <h2 class="text-xl font-bold text-on-surface mb-2 line-clamp-2">{{ course.title }}</h2>
             <div class="flex items-center text-secondary text-sm">
               <span class="material-symbols-outlined text-sm mr-1">person</span>
-              <span>Instruktur: Evan You</span>
+              <span>Instruktur: {{ course.instructor?.name }}</span>
             </div>
           </div>
         </div>
@@ -71,22 +75,14 @@
           <div class="space-y-4 mb-6">
             <div class="flex justify-between items-center text-on-surface-variant">
               <span>Harga Kursus</span>
-              <span class="font-medium">Rp 499.000</span>
-            </div>
-            <div class="flex justify-between items-center text-on-surface-variant">
-              <span>Diskon <span class="text-xs bg-tertiary/10 text-tertiary px-1.5 py-0.5 rounded ml-1">PROMO20</span></span>
-              <span class="text-tertiary font-medium">- Rp 99.800</span>
-            </div>
-            <div class="flex justify-between items-center text-on-surface-variant">
-              <span>Biaya Layanan (Pajak)</span>
-              <span class="font-medium">Rp 4.000</span>
+              <span class="font-medium">{{ course.price == 0 ? 'Gratis' : 'Rp ' + course.price.toLocaleString('id-ID') }}</span>
             </div>
           </div>
 
           <div class="border-t border-surface-container-high pt-4 mb-8">
             <div class="flex justify-between items-center">
               <span class="text-on-surface font-semibold">Total Bayar</span>
-              <span class="text-2xl font-bold text-primary">Rp 403.200</span>
+              <span class="text-2xl font-bold text-primary">{{ course.price == 0 ? 'Gratis' : 'Rp ' + course.price.toLocaleString('id-ID') }}</span>
             </div>
           </div>
 
@@ -184,30 +180,93 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
+const route = useRoute();
 const router = useRouter();
 const isProcessing = ref(false);
-const showModal = ref(false);
+const course = ref(null);
+const isLoading = ref(true);
 
-const processPayment = () => {
+const fetchCourse = async () => {
+  try {
+    const res = await axios.get(`/courses/${route.params.id}`);
+    course.value = res.data.data;
+  } catch (error) {
+    console.error(error);
+    Swal.fire('Error', 'Gagal memuat kursus', 'error');
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const loadSnapScript = () => {
+  return new Promise((resolve) => {
+    if (document.getElementById('midtrans-script')) {
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.id = 'midtrans-script';
+    // Gunakan URL Sandbox untuk testing
+    script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+    
+    // Ambil client key asli dari meta tag yang ada di welcome.blade.php
+    const clientKey = document.querySelector('meta[name="midtrans-client-key"]')?.getAttribute('content');
+    script.setAttribute('data-client-key', clientKey || 'SB-Mid-client-DUMMY'); 
+    
+    script.onload = () => resolve();
+    document.head.appendChild(script);
+  });
+};
+
+onMounted(async () => {
+  await fetchCourse();
+  await loadSnapScript();
+});
+
+const processPayment = async () => {
   isProcessing.value = true;
-  
-  // Simulasi API call ke backend untuk mendapatkan Snap Token
-  setTimeout(() => {
+  try {
+    const res = await axios.post(`/checkout/${course.value.id}/process`);
+    
+    if (res.data.is_free) {
+      Swal.fire('Berhasil!', 'Kursus gratis berhasil ditambahkan.', 'success');
+      router.push(`/course/${course.value.id}`);
+      return;
+    }
+
+    const snapToken = res.data.snap_token;
+    const orderId = res.data.order_id;
+
+    // Panggil Snap Midtrans
+    window.snap.pay(snapToken, {
+      onSuccess: async function (result) {
+        // Trik Localhost: Beritahu backend untuk memverifikasi karena Webhook tidak jalan di localhost
+        await axios.post(`/checkout/${orderId}/verify`);
+        
+        Swal.fire('Pembayaran Berhasil!', 'Selamat belajar.', 'success');
+        router.push(`/course/${course.value.id}`);
+      },
+      onPending: function (result) {
+        Swal.fire('Menunggu Pembayaran', 'Silakan selesaikan pembayaran Anda.', 'info');
+      },
+      onError: function (result) {
+        Swal.fire('Gagal', 'Pembayaran gagal diproses.', 'error');
+      },
+      onClose: function () {
+        Swal.fire('Dibatalkan', 'Anda menutup jendela sebelum menyelesaikan pembayaran.', 'warning');
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+    Swal.fire('Error', 'Terjadi kesalahan saat memproses pembayaran.', 'error');
+  } finally {
     isProcessing.value = false;
-    showModal.value = true;
-  }, 1200);
-};
-
-const closeModal = () => {
-  showModal.value = false;
-};
-
-const confirmPayment = () => {
-  showModal.value = false;
-  // Beralih ke halaman course player setelah sukses
-  router.push('/course/1');
+  }
 };
 </script>
