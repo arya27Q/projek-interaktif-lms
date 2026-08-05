@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
 use App\Models\Academic\Course;
 use App\Models\Academic\Module;
 use App\Models\Academic\Lesson;
@@ -16,56 +14,70 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Create a mock course
-        $course = Course::create([
-            'instructor_id' => 1,
-            'title' => 'Mastering Vue & Laravel',
-            'category' => 'Pemrograman',
-            'level' => 'intermediate',
-            'thumbnail_url' => 'https://via.placeholder.com/600x400.png?text=Vue+Laravel',
-            'price' => 299000,
-            'average_rating' => 4.8,
-            'status' => 'published',
-            'slug' => 'mastering-vue-laravel',
-            'description' => 'Pelajari cara membangun aplikasi modern dengan Vue 3 dan Laravel 11.'
-        ]);
+        // Pastikan kita menggunakan course ID = 1 yang sudah kita buat
+        $course = Course::find(1);
+        
+        if (!$course) {
+            // Jika belum ada, buat dummy course baru
+            $course = Course::create([
+                'instructor_id' => 1,
+                'title' => 'Mastering Vue 3 & Midtrans',
+                'slug' => 'vue-midtrans-' . time(),
+                'description' => 'Belajar Vue dan Midtrans',
+                'price' => 250000,
+                'status' => 'published',
+                'category' => 'Web Development',
+                'level' => 'intermediate'
+            ]);
+        }
 
-        // 2. Create modules
+        // Hapus modul lama jika ada (untuk testing agar fresh)
+        $course->modules()->delete();
+
+        // Modul 1
         $module1 = Module::create([
             'course_id' => $course->id,
-            'title' => 'Pengenalan & Setup',
+            'title' => 'Pengenalan Sistem Pembayaran',
             'order_index' => 1,
         ]);
 
-        $module2 = Module::create([
-            'course_id' => $course->id,
-            'title' => 'Membuat API dengan Laravel',
+        Lesson::create([
+            'module_id' => $module1->id,
+            'title' => 'Konsep Dasar Midtrans',
+            'type' => 'video',
+            'media_url' => 'https://www.w3schools.com/html/mov_bbb.mp4',
+            'order_index' => 1,
+        ]);
+
+        Lesson::create([
+            'module_id' => $module1->id,
+            'title' => 'Setup Environment Lokal',
+            'type' => 'video',
+            'media_url' => 'https://www.w3schools.com/html/mov_bbb.mp4',
             'order_index' => 2,
         ]);
 
-        // 3. Create lessons
-        Lesson::create([
-            'module_id' => $module1->id,
-            'title' => 'Instalasi Laravel 11',
-            'type' => 'video',
-            'media_url' => 'https://www.w3schools.com/html/mov_bbb.mp4',
-            'order_index' => 1
+        // Modul 2
+        $module2 = Module::create([
+            'course_id' => $course->id,
+            'title' => 'Implementasi Vue 3',
+            'order_index' => 2,
         ]);
-        
+
         Lesson::create([
-            'module_id' => $module1->id,
-            'title' => 'Instalasi Vue 3 & Vite',
+            'module_id' => $module2->id,
+            'title' => 'Membuat Komponen Checkout',
             'type' => 'video',
             'media_url' => 'https://www.w3schools.com/html/mov_bbb.mp4',
-            'order_index' => 2
+            'order_index' => 1,
         ]);
         
         Lesson::create([
             'module_id' => $module2->id,
-            'title' => 'Routing & Controller',
+            'title' => 'Mengirim Token Snap',
             'type' => 'video',
             'media_url' => 'https://www.w3schools.com/html/mov_bbb.mp4',
-            'order_index' => 1
+            'order_index' => 2,
         ]);
     }
 }

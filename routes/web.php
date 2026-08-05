@@ -40,6 +40,13 @@ Route::controller(AuthController::class)->group(function () {
         Route::get('/player/course/{id}', [CoursePlayerController::class, 'getContent']);
         Route::get('/player/lesson/{id}/notes', [CoursePlayerController::class, 'getNotes']);
         Route::post('/player/lesson/{id}/notes', [CoursePlayerController::class, 'saveNote']);
+        
+        // Progress, Quiz, Bookmark & Diskusi
+        Route::post('/player/lesson/{id}/progress', [CoursePlayerController::class, 'updateProgress']);
+        Route::post('/player/lesson/{id}/bookmark', [CoursePlayerController::class, 'toggleBookmark']);
+        Route::post('/player/lesson/{id}/quiz', [CoursePlayerController::class, 'submitQuiz']);
+        Route::get('/player/lesson/{id}/discussions', [CoursePlayerController::class, 'getDiscussions']);
+        Route::post('/player/lesson/{id}/discussions', [CoursePlayerController::class, 'postDiscussion']);
 
         // Rute Checkout
         Route::post('/checkout/{id}/process', [CheckoutController::class, 'process']);

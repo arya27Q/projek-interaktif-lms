@@ -9,10 +9,13 @@
       <!-- Player Container -->
       <div class="relative flex-1 min-h-0">
         <VideoPlayer
+          :src="store.currentLesson?.media_url"
           :poster-url="posterUrl"
           poster-alt="Thumbnail Video Kursus"
           @play="store.play()"
           @pause="store.pause()"
+          @timeupdate="onTimeUpdate"
+          @ended="onEnded"
         >
           <!-- Slot Quiz Pop-up -->
           <template #quiz>
@@ -28,20 +31,26 @@
       <!-- Info Video -->
       <div class="bg-surface-container-lowest p-5 md:p-6 rounded-2xl shadow-sm border border-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
         <div>
-          <h2 class="font-headline-md text-lg md:text-xl font-bold text-on-surface mb-1">Sistem Desain Interaksi Lanjutan</h2>
+          <h2 class="font-headline-md text-lg md:text-xl font-bold text-on-surface mb-1">
+            {{ store.currentLesson?.title || 'Memuat pelajaran...' }}
+          </h2>
           <div class="flex flex-wrap items-center gap-2 text-secondary text-sm">
-            <span class="px-2 py-0.5 bg-primary/10 text-primary rounded text-xs font-bold uppercase tracking-wider whitespace-nowrap">Modul 4</span>
-            <span class="hidden sm:inline">Mengelola Shell Navigasi yang Kompleks</span>
+            <span class="px-2 py-0.5 bg-primary/10 text-primary rounded text-xs font-bold uppercase tracking-wider whitespace-nowrap">
+              {{ store.currentCourse?.title || 'Memuat Kursus...' }}
+            </span>
+            <span class="hidden sm:inline">Pelajaran ini bagian dari kursus tersebut.</span>
           </div>
         </div>
         <div class="flex items-center gap-2 shrink-0 flex-wrap">
           <button @click="store.triggerQuiz(defaultQuiz)" class="flex items-center gap-1.5 px-4 py-2 border border-outline-variant rounded-full text-sm font-medium hover:bg-surface-container-low hover:text-primary transition-all">
             <span class="material-symbols-outlined text-base">quiz</span> Kuis
           </button>
-          <button class="flex items-center gap-1.5 px-4 py-2 border border-outline-variant rounded-full text-sm font-medium hover:bg-surface-container-low hover:text-primary transition-all">
-            <span class="material-symbols-outlined text-base">bookmark</span> Simpan
+          <button @click="store.toggleBookmark()" class="flex items-center gap-1.5 px-4 py-2 border rounded-full text-sm font-medium transition-all"
+            :class="store.isBookmarked ? 'bg-primary/10 text-primary border-primary' : 'border-outline-variant hover:bg-surface-container-low hover:text-primary'">
+            <span class="material-symbols-outlined text-base">{{ store.isBookmarked ? 'bookmark_added' : 'bookmark' }}</span> 
+            {{ store.isBookmarked ? 'Tersimpan' : 'Simpan' }}
           </button>
-          <button class="flex items-center gap-1.5 px-5 py-2 bg-on-surface text-surface rounded-full text-sm font-bold hover:shadow-lg transition-all hover:-translate-y-0.5 active:scale-95">
+          <button @click="downloadMateri" class="flex items-center gap-1.5 px-5 py-2 bg-on-surface text-surface rounded-full text-sm font-bold hover:shadow-lg transition-all hover:-translate-y-0.5 active:scale-95">
             <span class="material-symbols-outlined text-base">download</span> Materi
           </button>
         </div>
@@ -311,20 +320,32 @@ const startAskingQuestion = () => {
 };
 
 const submitQuestion = () => {
-  if (newQuestionText.value.trim()) {
-    store.discussions.unshift({
-      id: Date.now(),
-      author: 'Anda',
-      avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDMx_rL2GZkuoEJIXlW3MmTRQwk2eQdnOXt-DjyV6locEOq4BiDrvCioDR4iGOgoxaUb6tbKxlqwV8h90wAwULBwrCADGCHFAPEF_JsljzN6vjBSNUT7wDNgO0Cc8vuhRhlDVvR-WqpbbxEPjYGWiXtEGZF0PZS9aQNgTeIJfgQJeebQKMespvlJEy_3MK3NCVIzmU73tSeu3iObfsi1Lmv4oE0PVr4SoTAeKgcYR888lpkkjND5VnnYPIHPsySo9vwVDShj9mSmxSB',
-      question: newQuestionText.value,
-      videoTimestamp: store.currentTime,
-      createdAt: 'Baru saja',
-      likes: 0,
-      replies: 0,
-      isSolved: false
-    });
-    newQuestionText.value = '';
-    isAskingQuestion.value = false;
+  if (newQuestionText.value.trim() === '') return;
+  store.postDiscussion(newQuestionText.value);
+  newQuestionText.value = '';
+  isAskingQuestion.value = false;
+};
+
+let lastSyncTime = 0;
+const onTimeUpdate = (time) => {
+  store.currentTime = time;
+  // Sync progress every 10 seconds to avoid spamming the server
+  if (time - lastSyncTime >= 10) {
+    store.syncProgress(time, false);
+    lastSyncTime = time;
+  }
+};
+
+const onEnded = () => {
+  store.syncProgress(store.currentTime, true);
+};
+
+const downloadMateri = () => {
+  const url = store.currentLesson?.media_url;
+  if (url) {
+    window.open(url, '_blank');
+  } else {
+    Swal.fire('Info', 'Tidak ada file materi untuk di-download pada pelajaran ini.', 'info');
   }
 };
 

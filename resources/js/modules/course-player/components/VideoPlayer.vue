@@ -1,13 +1,19 @@
 <template>
-  <div class="relative w-full h-full bg-black rounded-2xl overflow-hidden shadow-2xl group flex flex-col">
+  <div ref="playerContainer" class="relative w-full h-full bg-black rounded-2xl overflow-hidden shadow-2xl group flex flex-col">
     <!-- Video Poster / Placeholder -->
     <div class="relative w-full h-full bg-slate-900 flex items-center justify-center overflow-hidden">
-      <img
+      <!-- Video Element -->
+      <video
+        ref="videoRef"
         class="w-full h-full object-cover transition-all duration-700"
-        :class="isPlaying ? 'opacity-50 scale-[1.02]' : 'opacity-75'"
-        :alt="posterAlt"
-        :src="posterUrl"
-      />
+        :class="isPlaying ? 'scale-[1.02]' : 'opacity-75'"
+        :src="src"
+        :poster="posterUrl"
+        @timeupdate="onTimeUpdate"
+        @loadedmetadata="onLoadedMetadata"
+        @ended="onEnded"
+        @click="togglePlay"
+      ></video>
 
       <!-- Ambient Glow saat Playing -->
       <div v-if="isPlaying" class="absolute inset-0 bg-linear-to-tr from-primary/15 to-transparent mix-blend-overlay pointer-events-none"></div>
@@ -32,6 +38,17 @@
 
       <!-- Popup Quiz Overlay (via slot / component) -->
       <slot name="quiz" />
+      
+      <!-- Settings Menu (Speed) -->
+      <transition enter-active-class="transition duration-200" enter-from-class="opacity-0 translate-y-2" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-2">
+        <div v-if="showSettings" class="absolute bottom-16 right-4 bg-surface-container-highest text-on-surface p-2 rounded-xl shadow-xl flex flex-col gap-1 z-20 w-32 border border-surface-container-low">
+          <div class="text-[10px] font-bold text-secondary uppercase px-2 py-1">Kecepatan</div>
+          <button v-for="rate in playbackRates" :key="rate" @click="setPlaybackRate(rate)" class="text-xs font-medium px-2 py-1.5 rounded-lg text-left hover:bg-primary/10 hover:text-primary transition-colors flex justify-between items-center" :class="currentRate === rate ? 'bg-primary/10 text-primary' : ''">
+            {{ rate }}x
+            <span v-if="currentRate === rate" class="material-symbols-outlined text-[14px]">check</span>
+          </button>
+        </div>
+      </transition>
     </div>
 
     <!-- Control Bar Bawah -->
@@ -67,14 +84,14 @@
         <button @click="toggleMute" class="text-white hover:text-primary transition-colors">
           <span class="material-symbols-outlined text-[20px]">{{ isMuted ? 'volume_off' : 'volume_up' }}</span>
         </button>
-        <button class="text-white hover:text-primary transition-colors">
+        <button @click="toggleCC" class="text-white hover:text-primary transition-colors" title="Subtitles / CC">
           <span class="material-symbols-outlined text-[20px]">closed_caption</span>
         </button>
-        <button class="text-white hover:text-primary transition-colors">
+        <button @click="showSettings = !showSettings" class="text-white hover:text-primary transition-colors" title="Pengaturan">
           <span class="material-symbols-outlined text-[20px]">settings</span>
         </button>
-        <button class="text-white hover:text-primary transition-colors">
-          <span class="material-symbols-outlined text-[20px]">fullscreen</span>
+        <button @click="toggleFullscreen" class="text-white hover:text-primary transition-colors" title="Layar Penuh">
+          <span class="material-symbols-outlined text-[20px]">{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</span>
         </button>
       </div>
     </div>
@@ -82,9 +99,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import Swal from 'sweetalert2';
 
 const props = defineProps({
+  src: { type: String, default: '' },
   posterUrl: {
     type: String,
     default: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0RP7kGuFLvE-MxKRPkETJKsTdJcVtU8iCWwmR_gXzkACXq1teovWWTaxh87vuAtcn7puOCd-2ett9fPQfeo96PAttoGCI9NIMsLgLjHJno2z1ykyzHo9zXyzQFwwt8gI3XOV4GS9m-rydsbcvYFPzxN3TEFMbhMd1wqch1MmEKD_gyFk1I5zBd4m4lBHlqD3tYVbTUVlHwQTZkbXie8KRdeA4DkZ9yACbbsPyIbVh_CPmD-iG4vyiQbxK85-ymcxFGloNTAeXlDyK'
@@ -92,35 +111,120 @@ const props = defineProps({
   posterAlt: { type: String, default: 'Video Thumbnail' }
 });
 
-const emit = defineEmits(['play', 'pause', 'seek']);
+const emit = defineEmits(['play', 'pause', 'seek', 'timeupdate', 'ended']);
 
+const videoRef = ref(null);
+const playerContainer = ref(null);
 const isPlaying = ref(false);
 const isMuted = ref(false);
-const currentTime = ref(522); // 8:42 untuk demo
-const duration = ref(1455);  // 24:15 untuk demo
-const progressPercent = ref(35);
-const bufferPercent = ref(60);
+const currentTime = ref(0);
+const duration = ref(0);
+const progressPercent = ref(0);
+const bufferPercent = ref(100);
+const isFullscreen = ref(false);
+
+const showSettings = ref(false);
+const playbackRates = [0.5, 0.75, 1, 1.25, 1.5, 2];
+const currentRate = ref(1);
+
+// Reset ketika src berubah
+watch(() => props.src, () => {
+  isPlaying.value = false;
+  currentTime.value = 0;
+  progressPercent.value = 0;
+  if (videoRef.value) {
+    videoRef.value.load();
+  }
+});
 
 const togglePlay = () => {
-  isPlaying.value = !isPlaying.value;
-  emit(isPlaying.value ? 'play' : 'pause');
+  if (!videoRef.value) return;
+  
+  if (isPlaying.value) {
+    videoRef.value.pause();
+    isPlaying.value = false;
+    emit('pause');
+  } else {
+    videoRef.value.play();
+    isPlaying.value = true;
+    emit('play');
+  }
 };
 
 const toggleMute = () => {
+  if (!videoRef.value) return;
   isMuted.value = !isMuted.value;
+  videoRef.value.muted = isMuted.value;
 };
 
 const seek = (e) => {
+  if (!videoRef.value) return;
   const rect = e.currentTarget.getBoundingClientRect();
-  const pct = Math.min(Math.max(((e.clientX - rect.left) / rect.width) * 100, 0), 100);
-  progressPercent.value = pct;
-  currentTime.value = Math.round((pct / 100) * duration.value);
-  emit('seek', currentTime.value);
+  const pct = Math.min(Math.max(((e.clientX - rect.left) / rect.width), 0), 1);
+  videoRef.value.currentTime = pct * duration.value;
+};
+
+const onTimeUpdate = () => {
+  if (!videoRef.value) return;
+  currentTime.value = videoRef.value.currentTime;
+  if (duration.value > 0) {
+    progressPercent.value = (currentTime.value / duration.value) * 100;
+  }
+  emit('timeupdate', currentTime.value);
+};
+
+const onLoadedMetadata = () => {
+  if (!videoRef.value) return;
+  duration.value = videoRef.value.duration;
+};
+
+const onEnded = () => {
+  isPlaying.value = false;
+  emit('pause');
+  emit('ended');
 };
 
 const formatTime = (seconds) => {
+  if (isNaN(seconds)) return '00:00';
   const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
+  const s = Math.floor(seconds % 60);
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 };
+
+const toggleFullscreen = () => {
+  if (!document.fullscreenElement) {
+    playerContainer.value?.requestFullscreen().catch(err => {
+      console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+};
+
+const setPlaybackRate = (rate) => {
+  currentRate.value = rate;
+  if (videoRef.value) {
+    videoRef.value.playbackRate = rate;
+  }
+  showSettings.value = false;
+};
+
+const toggleCC = () => {
+  // Mockup untuk fitur CC
+  Swal.fire({
+    title: 'Info Subtitle',
+    text: 'Subtitle/CC belum tersedia untuk materi video ini.',
+    icon: 'info',
+    toast: true,
+    position: 'bottom-end',
+    showConfirmButton: false,
+    timer: 3000
+  });
+};
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', () => {
+    isFullscreen.value = !!document.fullscreenElement;
+  });
+});
 </script>

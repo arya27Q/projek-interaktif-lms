@@ -27,8 +27,8 @@ class CheckoutController extends Controller
     {
         $course = Course::findOrFail($courseId);
 
-        // Jika kursus gratis, langsung sukseskan
-        if ($course->price <= 0) {
+        // Jika kursus gratis (atau mode testing lokal), langsung sukseskan
+        if ($course->price <= 0 || env('APP_ENV') === 'local') {
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'course_id' => $course->id,
@@ -39,7 +39,7 @@ class CheckoutController extends Controller
             return response()->json([
                 'success' => true,
                 'is_free' => true,
-                'message' => 'Kursus gratis berhasil diklaim',
+                'message' => 'Kursus berhasil dibeli (Bypass Mode Lokal)',
             ]);
         }
 

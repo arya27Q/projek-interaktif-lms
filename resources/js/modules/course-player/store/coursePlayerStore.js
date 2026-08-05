@@ -18,7 +18,7 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
   const activeTab = ref('content');
 
   // Daftar modul & pelajaran
-  const modules = ref([]);
+  const modulesData = ref([]);
   const currentCourse = ref(null);
 
   const currentLessonId = ref(null);
@@ -27,39 +27,35 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
   const notes = ref([]);
 
   // Diskusi
-  const discussions = ref([
-    {
-      id: 1,
-      author: 'Marcus Chen',
-      avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBKX-BSFhv4vkGiprHQjWaEFPJ1UNzQAJiqoQGq_y6SFVBlgNQzx5w2AyvrsNlO3tHlRZqKfNtxT369HeWawHvq78FBsJNqfJ1r8NpTHkLfjzuxOFlGlBJbqNJ0EyrZRIJTypP4oApzDFKQMXPEckv-FOHQcVXRZN9meoAjcJ38OaEXV1KHOV7vZPLwmI2ASo8_x-r-zeYaUxDWXeEOFOk7jksEOIY1cfeLLTygVdASW6r8JhT5dQMC3gszr6jWA5_VoUZBLaNjSz96',
-      question: 'Kenapa menggunakan floating margins dibanding docked edges untuk sidebar?',
-      likes: 12,
-      replies: 3,
-      createdAt: '4 jam lalu',
-      videoTimestamp: 120,
-      isSolved: false
-    },
-    {
-      id: 2,
-      author: 'Sarah Jenkins',
-      avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBhcWegoxKYCql6QxBDvExKf7tw69mUT3AnGtphVPgSsZL39CvfFxbZzu6pn3ydtNN7VisFW4OSllCa2ebS7CygH-YzFwVYJbgDFFoE_fCwcGjuUZDih0SWr9n4K_NnUGnbZoxZT8JMaVKBZA0HpsjT_tT_Auurtt9R40KqhPBQn8Zz-53aWUMSX7Wz2ylvWMQtDfzOgXU3fiNqfJ4igAK1T2VoQuWgrCaVuePKeYorUk66SSDtR_s88PAqYLVfpDIgIi1Cf_p5ZlYr',
-      question: 'Kesulitan dengan responsive pivot di tampilan tablet.',
-      likes: 8,
-      replies: 1,
-      createdAt: 'Kemarin',
-      videoTimestamp: 450,
-      isSolved: true
-    }
-  ]);
+  const discussions = ref([]);
+
+  // Bookmark status
+  const isBookmarked = ref(false);
+  const completedLessonsArray = ref([]);
 
   // Progress
-  const totalLessons = ref(24);
-  const completedLessons = ref(12);
+  const totalLessons = computed(() => {
+    return modulesData.value.reduce((acc, mod) => acc + (mod.lessons?.length || 0), 0);
+  });
+  const completedLessons = computed(() => completedLessonsArray.value.length);
 
   // ── Getters ────────────────────────────────────────────────────────
-  const progressPercent = computed(() =>
-    Math.round((completedLessons.value / totalLessons.value) * 100)
-  );
+  const progressPercent = computed(() => {
+    if (totalLessons.value === 0) return 0;
+    return Math.round((completedLessons.value / totalLessons.value) * 100);
+  });
+
+  const modules = computed(() => {
+    return modulesData.value.map(mod => ({
+      ...mod,
+      lessons: mod.lessons.map(lesson => ({
+        ...lesson,
+        isActive: lesson.id === currentLessonId.value,
+        locked: false, // Sementara semua kebuka untuk testing
+        completed: completedLessonsArray.value.includes(lesson.id)
+      }))
+    }));
+  });
 
   const currentLesson = computed(() => {
     for (const mod of modules.value) {
@@ -95,11 +91,11 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
     try {
       const response = await axios.get(`/player/course/${courseId}`);
       currentCourse.value = response.data.data;
-      modules.value = currentCourse.value.modules;
+      modulesData.value = currentCourse.value.modules || [];
       
       // Select first lesson by default if none selected
-      if (!currentLessonId.value && modules.value.length > 0 && modules.value[0].lessons.length > 0) {
-        selectLesson(modules.value[0].lessons[0].id);
+      if (!currentLessonId.value && modulesData.value.length > 0 && modulesData.value[0].lessons.length > 0) {
+        selectLesson(modulesData.value[0].lessons[0].id);
       }
     } catch (error) {
       console.error('Error fetching course data', error);
@@ -143,6 +139,83 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
     isPlaying.value = false;
     currentTime.value = 0;
     fetchNotes(lessonId);
+    fetchDiscussions(lessonId);
+  };
+
+  const syncProgress = async (time, isCompleted = false) => {
+    if (!currentLessonId.value) return;
+    try {
+      await axios.post(`/player/lesson/${currentLessonId.value}/progress`, {
+        progress_seconds: Math.floor(time),
+        is_completed: isCompleted
+      });
+      if (isCompleted && !completedLessonsArray.value.includes(currentLessonId.value)) {
+        completedLessonsArray.value.push(currentLessonId.value);
+      }
+    } catch (error) {
+      console.error('Error syncing progress', error);
+    }
+  };
+
+  const toggleBookmark = async () => {
+    if (!currentLessonId.value) return;
+    try {
+      const res = await axios.post(`/player/lesson/${currentLessonId.value}/bookmark`, {
+        timestamp: Math.floor(currentTime.value)
+      });
+      isBookmarked.value = res.data.bookmarked;
+    } catch (error) {
+      console.error('Error toggling bookmark', error);
+    }
+  };
+
+  const fetchDiscussions = async (lessonId) => {
+    try {
+      const res = await axios.get(`/player/lesson/${lessonId}/discussions`);
+      discussions.value = res.data.data.map(d => ({
+        id: d.id,
+        author: d.user.name,
+        avatar: d.user.avatar || 'https://ui-avatars.com/api/?name=' + d.user.name,
+        question: d.content,
+        likes: 0,
+        replies: 0,
+        createdAt: new Date(d.created_at).toLocaleDateString(),
+        isSolved: false
+      }));
+    } catch (error) {
+      console.error('Error fetching discussions', error);
+    }
+  };
+
+  const postDiscussion = async (content) => {
+    if (!currentLessonId.value) return;
+    try {
+      const res = await axios.post(`/player/lesson/${currentLessonId.value}/discussions`, { content });
+      discussions.value.unshift({
+        id: res.data.data.id,
+        author: res.data.data.user.name,
+        avatar: res.data.data.user.avatar || 'https://ui-avatars.com/api/?name=' + res.data.data.user.name,
+        question: res.data.data.content,
+        likes: 0,
+        replies: 0,
+        createdAt: 'Baru saja',
+        isSolved: false
+      });
+    } catch (error) {
+      console.error('Error posting discussion', error);
+    }
+  };
+
+  const submitQuizResult = async (score) => {
+    if (!currentLessonId.value) return;
+    try {
+      await axios.post(`/player/lesson/${currentLessonId.value}/quiz`, { score });
+      if (!completedLessonsArray.value.includes(currentLessonId.value)) {
+        completedLessonsArray.value.push(currentLessonId.value);
+      }
+    } catch (error) {
+      console.error('Error submitting quiz', error);
+    }
   };
 
   return {
@@ -150,12 +223,13 @@ export const useCoursePlayerStore = defineStore('coursePlayer', () => {
     showQuiz, currentQuiz,
     activeTab,
     modules, currentLessonId, currentLesson, currentCourse,
-    notes, discussions,
-    totalLessons, completedLessons, progressPercent,
+    notes, discussions, isBookmarked,
+    totalLessons, completedLessons, progressPercent, completedLessonsArray,
     formatTime,
     togglePlay, pause, play,
     triggerQuiz, dismissQuiz,
     fetchCourseData, fetchNotes,
-    addNote, selectLesson
+    addNote, selectLesson,
+    syncProgress, toggleBookmark, fetchDiscussions, postDiscussion, submitQuizResult
   };
 });
